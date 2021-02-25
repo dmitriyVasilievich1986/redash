@@ -15,12 +15,11 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from main.views import index_view, some_test_view, get_dashboards, get_single_dashboard
+
+# from main.views import index_view, some_test_view, get_dashboards, get_single_dashboard
+from main.views import index_view
 
 urlpatterns = [
-    path("get_dashboards/", get_dashboards),
-    path("get_single_dashboard/<pk>", get_single_dashboard),
     path("", index_view),
-    path("dashboard/<pk>", index_view),
-    # path("<path:resource>", index_view),
+    path("asd/qwe/", index_view),
 ]

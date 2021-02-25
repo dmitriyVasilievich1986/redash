@@ -1,0 +1,32 @@
+{
+    "query_id": 11,
+    "type": "CHART",
+    "name": "1",
+    "options": {
+        "showDataLabels": False,
+        "direction": {"type": "counterclockwise"},
+        "missingValuesAsZero": False,
+        "error_y": {"visible": True, "type": "data"},
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [{"type": "linear"}, {"type": "linear", "opposite": True}],
+        "series": {
+            "stacking": "stack",
+            "percentValues": False,
+            "error_y": {"visible": True, "type": "data"},
+        },
+        "globalSeriesType": "column",
+        "percentFormat": "0[.]00%",
+        "sortX": True,
+        "valuesOptions": {},
+        "xAxis": {"labels": {"enabled": True}, "type": "-"},
+        "dateTimeFormat": "YYYY-MM-DD HH:mm",
+        "columnMapping": {
+            "Gpps": "unused",
+            "Traffic": "y",
+            "PointAddress": "series",
+            "DateTime": "x",
+        },
+        "textFormat": "",
+        "legend": {"enabled": True},
+    },
+}

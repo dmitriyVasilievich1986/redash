@@ -16,16 +16,29 @@ def refresh_query(id):
     return response.json()
 
 
-def update_query(id, data):
+def update_query(data):
+    pk = data.get("id", None)
+    if pk is None:
+        return {"message": "Bad request"}
+    context = {
+        "name": data.get("name", ""),
+        "query": data.get("query", ""),
+    }
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    response = Redash.post(f"queries/{id}", data)
-    return response.json()
+    response = Redash.post(f"queries/{pk}", context)
+    return {"payload": response.json()}
 
 
-def update_visualization(id, data):
+def update_visualization(data):
+    pk = data.get("id", None)
+    if pk is None:
+        return {"message": "Bad request"}
+    context = {
+        "name": data.get("name", ""),
+    }
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    response = Redash.post(f"visualizations/{id}", data)
-    return response.json()
+    response = Redash.post(f"visualizations/{pk}", context)
+    return {"payload": response.json()}
 
 
 def get_query(query_id):
@@ -52,20 +65,30 @@ def delete_widget(id):
     return response.status_code
 
 
-def get_all_dashboards():
+def get_dashboards(*args, **kwargs):
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
     response = Redash.get("dashboards")
     return response.json()
 
 
-def get_dashboards(request):
+def get_all_dashboards(*args, **kwargs):
     dashboards = list()
-    for dashboard in get_all_dashboards()["results"]:
+    for dashboard in get_dashboards()["results"]:
         dashboards.append(get_dashboard(dashboard["slug"]))
+    return {"payload": dashboards}
+
+
+def update_dashboard(data):
+    pk = data.get("id", None)
+    if pk is None:
+        return {"message": "Bad request"}
     context = {
-        "dashboard": dashboards,
+        "name": data.get("name", ""),
+        "tags": data.get("tags", "").split(","),
     }
-    return JsonResponse(context)
+    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
+    response = Redash.post(f"dashboards/{pk}", context)
+    return {"payload": response.json()}
 
 
 @csrf_exempt
@@ -73,28 +96,186 @@ def get_single_dashboard(request, pk=None):
     if not pk:
         return JsonResponse({"message": "bad_data"})
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    if request.method == "GET":
-        response = Redash.get(f"dashboards/{pk}")
-        if not response.status_code == 200:
-            return JsonResponse({"message": "bad_data"})
-        context = {
-            "dashboard": response.json(),
-        }
-        return JsonResponse(context)
+    response = Redash.get(f"dashboards/{pk}")
+    if not response.status_code == 200:
+        return JsonResponse({"message": "bad_data"})
     context = {
-        "tags": request.POST.get("tags", "").split(","),
-        "name": request.POST.get("name", ""),
+        "payload": response.json(),
     }
-    response = Redash.post(f"dashboards/{request.POST.get('id', 1)}", context)
-    return JsonResponse({"payload": response.json()})
+    return JsonResponse(context)
+
+
+def set_visualization_list(data):
+    slug = data.get("slug", None)
+    if slug is None:
+        return {"message": "Bad request"}
+    print(data)
+    splited_list = data.get("visualization_list", "").split(",")
+    vis_list = (
+        len(splited_list) > 0
+        and not splited_list[0] == ""
+        and [int(x) for x in splited_list]
+        or []
+    )
+    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
+    response = Redash.get(f"dashboards/{slug}").json()
+    pk = response["id"]
+    for x in response["widgets"]:
+        Redash.delete(f"widgets/{x['id']}")
+    # print(pk)
+    print(vis_list)
+    for i, x in enumerate(vis_list):
+        Redash.add_widget(pk, vs_id=x, full_width=True)
+        # context = {
+        #     "dashboard_id": pk,
+        #     "visualization_id": x,
+        #     "width": 1,
+        #     "options": {
+        #         # "position": {
+        #         #     "col": 0,
+        #         #     "row": i * 3,
+        #         #     "sizeX": 6,
+        #         #     "sizeY": 8,
+        #         # }
+        #         "position": Redash.calculate_widget_position(pk, full_width=True)
+        #     },
+        # }
+        # print(context)
+        # a = Redash.post("widgets", context)
+        # print(a.json()["visualizations"])
+    response = Redash.get(f"dashboards/{slug}").json()
+    # response = list()
+
+    return {"payload": response}
+
+
+def get_all_visualization(*args, **kwargs):
+    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
+    queries = Redash.get(f"queries").json()
+    response = []
+    for x in queries["results"]:
+        for z in Redash.get(f"queries/{x['id']}").json()["visualizations"]:
+            z["querie_id"] = x["id"]
+            z["query"] = x["query"]
+            response.append(z)
+    # response = [Redash.get(f"queries/{x['id']}").json()['visualizations'] for x in queries["results"]]
+    return {"payload": response}
+    # return {"payload": queries}
+
+
+def update_query_list(query_list):
+    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
+    response = list()
+    for x in query_list:
+        context = {
+            "query": x["query"],
+        }
+        querie = Redash.post(f'queries/{x["id"]}', context).json()
+        response.append(querie)
+    return {"payload": response}
+
+
+def get_all_queries(*args, **kwargs):
+    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
+    queries = Redash.get(f"queries").json()
+    response = []
+    for x in queries["results"]:
+        z = Redash.get(f"queries/{x['id']}").json()
+        response.append(z)
+    return {"payload": response}
+
+
+def get_line_options(line, *args, **kwargs):
+    context = {
+        "showDataLabels": False,
+        "direction": {"type": "counterclockwise"},
+        "missingValuesAsZero": False,
+        "error_y": {"visible": True, "type": "data"},
+        "numberFormat": "0,0[.]00000",
+        "yAxis": [{"type": "linear"}, {"type": "linear", "opposite": True}],
+        "series": {
+            "stacking": "stack",
+            "percentValues": False,
+            "error_y": {"visible": True, "type": "data"},
+        },
+        "globalSeriesType": "column",
+        "percentFormat": "0[.]00%",
+        "sortX": True,
+        "valuesOptions": {},
+        "xAxis": {"labels": {"enabled": True}, "type": "-"},
+        "dateTimeFormat": "YYYY-MM-DD HH:mm",
+        "columnMapping": {
+            "Gpps": "unused",
+            line: "y",
+            "PointAddress": "series",
+            "DateTime": "x",
+        },
+        "textFormat": "",
+        "legend": {"enabled": True},
+    }
+    return context
+
+
+def set_new_visualization(data, *args, **kwargs):
+    pk = data.get("id", None)
+    if pk is None:
+        return {"message": "Bad request"}
+    template = data.get("template", "")
+    context = {
+        "query_id": pk,
+        "type": "CHART",
+        "name": data.get("name", ""),
+        "options": get_line_options(data.get("line", "")) if template == "line" else {},
+    }
+    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
+    response = Redash.post("visualizations", context).json()
+    return {"payload": response}
 
 
 @csrf_exempt
 def index_view(request, *args, **kwargs):
     if request.method == "POST":
         method = request.POST.get("method", None)
+        action = globals().get(method, None)
+        if not action:
+            return JsonResponse({"message": "Bad request"})
+        return JsonResponse(action(request.POST))
         if method == "refresh":
             return JsonResponse(refresh_query(request.POST["id"]))
+        elif method == "get_all_dashboards":
+            return get_dashboards_list(request)
+        elif method == "get_single_dashboard":
+            return get_single_dashboard(request, request.POST.get("slug", 1))
+        elif method == "get_all_visualization":
+            return JsonResponse(get_all_visualization())
+        elif method == "get_all_queries":
+            return JsonResponse(get_all_queries())
+        elif method == "update_query":
+            query_list = json.loads(request.POST.get("visualization_list", "[]"))
+            # print(json.loads(request.POST["visualization_list"])[0])
+            # print(request.POST["visualization_list"])
+            return JsonResponse(update_query_list(query_list))
+        elif method == "set_visualization_list":
+            splited_list = request.POST["visualization_list"].split(",")
+            vis_list = (
+                len(splited_list) > 0
+                and not splited_list[0] == ""
+                and [int(x) for x in splited_list]
+                or []
+            )
+            # return JsonResponse({"payload": vis_list})
+            return JsonResponse(
+                set_visualization_list(
+                    request.POST.get("slug", 1),
+                    vis_list=vis_list,
+                )
+            )
+        elif method == "update_dashboard":
+            context = {
+                "name": request.POST.get("name", ""),
+                "tags": request.POST.get("tags", "").split(","),
+            }
+            return JsonResponse(update_dashboard(request.POST.get("id", ""), context))
         elif method == "change_query":
             context = {
                 "name": request.POST.get("name", ""),
@@ -106,19 +287,6 @@ def index_view(request, *args, **kwargs):
         elif method == "delete_widget":
             return JsonResponse(delete_widget(request.POST.get("id", 1)), safe=False)
         return JsonResponse({"response": "", "message": "Bad data"})
-    # dashboard = get_dashboard()
-    # dashboard = list()
-    # for x in get_all_dashboards()["results"]:
-    #     dashboard.append(get_dashboard(x["slug"]))
-    # queries = list()
-    # for x in dashboard["widgets"]:
-    #     q = get_query(x["visualization"]["query"]["id"])
-    #     for c in q["visualizations"]:
-    #         if c["id"] == x["visualization"]["id"]:
-    #             q["v"] = c
-    #     queries.append(q)
-    # q = get_query(631112)
-    # print(q)
     return render(request, "index.html")
 
 

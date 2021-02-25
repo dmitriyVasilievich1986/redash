@@ -1,0 +1,625 @@
+{
+    "tags": [],
+    "is_archived": false,
+    "public_url": "http://194.67.21.42/public/dashboards/aO3EEKXKMcrSNebzYOl18cK0c8vWbh8skFCfYZJD?org_slug=default",
+    "updated_at": "2021-02-08T10:47:19.922Z",
+    "is_favorite": false,
+    "user": {
+        "auth_type": "password",
+        "is_disabled": false,
+        "updated_at": "2021-02-11T21:16:34.503Z",
+        "profile_image_url": "https://www.gravatar.com/avatar/d9f0669a3aa8a9b20e34aa730e79d2b2?s=40&d=identicon",
+        "is_invitation_pending": false,
+        "groups": [
+            1,
+            2,
+            3
+        ],
+        "id": 2,
+        "name": "tolik",
+        "created_at": "2020-07-26T15:36:04.920Z",
+        "disabled_at": null,
+        "is_email_verified": true,
+        "active_at": "2021-02-11T21:15:37Z",
+        "email": "anak@rol.ru"
+    },
+    "layout": [],
+    "is_draft": false,
+    "id": 5,
+    "can_edit": false,
+    "api_key": "aO3EEKXKMcrSNebzYOl18cK0c8vWbh8skFCfYZJD",
+    "user_id": 2,
+    "name": "Leroy Merlin",
+    "created_at": "2021-02-08T10:41:48.112Z",
+    "slug": "leroy-merlin",
+    "version": 2,
+    "widgets": [
+        {
+            "visualization": {
+                "description": "",
+                "created_at": "2021-02-09T08:03:28.329Z",
+                "updated_at": "2021-02-11T18:08:50.954Z",
+                "id": 26,
+                "query": {
+                    "user": {
+                        "auth_type": "password",
+                        "is_disabled": false,
+                        "updated_at": "2021-02-11T21:16:34.503Z",
+                        "profile_image_url": "https://www.gravatar.com/avatar/d9f0669a3aa8a9b20e34aa730e79d2b2?s=40&d=identicon",
+                        "is_invitation_pending": false,
+                        "groups": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "id": 2,
+                        "name": "tolik",
+                        "created_at": "2020-07-26T15:36:04.920Z",
+                        "disabled_at": null,
+                        "is_email_verified": true,
+                        "active_at": "2021-02-11T21:15:37Z",
+                        "email": "anak@rol.ru"
+                    },
+                    "created_at": "2021-02-08T07:17:29.690Z",
+                    "latest_query_data_id": 24929,
+                    "schedule": null,
+                    "description": null,
+                    "tags": [],
+                    "updated_at": "2021-02-11T21:14:32.243Z",
+                    "last_modified_by": {
+                        "auth_type": "password",
+                        "is_disabled": false,
+                        "updated_at": "2021-02-11T21:16:34.503Z",
+                        "profile_image_url": "https://www.gravatar.com/avatar/d9f0669a3aa8a9b20e34aa730e79d2b2?s=40&d=identicon",
+                        "is_invitation_pending": false,
+                        "groups": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "id": 2,
+                        "name": "tolik",
+                        "created_at": "2020-07-26T15:36:04.920Z",
+                        "disabled_at": null,
+                        "is_email_verified": true,
+                        "active_at": "2021-02-11T21:15:37Z",
+                        "email": "anak@rol.ru"
+                    },
+                    "options": {
+                        "parameters": []
+                    },
+                    "is_safe": true,
+                    "version": 1,
+                    "query_hash": "fc0b2279aef910ecb6c4c6ee8de1a560",
+                    "is_archived": false,
+                    "query": "select\n    Time as DateTime,\n    concat (CITY_R, ', ', ADDRESS) as PointAddress,\n    (sum(AcctInputOctets) + sum(AcctOutputOctets))/1024/1024/1024 as Traffic,\n    (sum(AcctInputOctets) + sum(AcctOutputOctets))*8/1024/1024/1024/900 as Gpps,\n    uniq(AcctSessionId) as sessions,\n    uniq(CallingStationId) as devices,\n    uniq(NASIPAddress) as aps\nfrom default.wifi_sessions, default.wifi_ap_history\nwhere NASIPAddress=INT_IP and CONTRACT_ID='IL405' and (Time>now()-INTERVAL 3 DAY)\ngroup by DateTime, PointAddress\norder by Traffic desc",
+                    "api_key": "RUXHWIK8ucEJr9xhfxilBUdQgYJzLcn2YB6Lz8yq",
+                    "is_draft": false,
+                    "id": 9,
+                    "data_source_id": 1,
+                    "name": "Leroy Merlin"
+                },
+                "type": "CHART",
+                "options": {
+                    "showDataLabels": true,
+                    "direction": {
+                        "type": "counterclockwise"
+                    },
+                    "missingValuesAsZero": true,
+                    "error_y": {
+                        "visible": true,
+                        "type": "data"
+                    },
+                    "numberFormat": "0,0[.]00000",
+                    "yAxis": [
+                        {
+                            "type": "linear"
+                        },
+                        {
+                            "type": "linear",
+                            "opposite": true
+                        }
+                    ],
+                    "series": {
+                        "stacking": null,
+                        "error_y": {
+                            "visible": true,
+                            "type": "data"
+                        }
+                    },
+                    "globalSeriesType": "pie",
+                    "percentFormat": "0[.]00%",
+                    "sortX": true,
+                    "seriesOptions": {
+                        "Gpps": {
+                            "zIndex": 0,
+                            "index": 0,
+                            "type": "pie",
+                            "yAxis": 0
+                        },
+                        "Traffic": {
+                            "zIndex": 1,
+                            "index": 0,
+                            "type": "pie",
+                            "yAxis": 0
+                        }
+                    },
+                    "xAxis": {
+                        "labels": {
+                            "enabled": true
+                        },
+                        "type": "-"
+                    },
+                    "dateTimeFormat": "YYYY-MM-DD HH:mm",
+                    "columnMapping": {
+                        "PointAddress": "x",
+                        "sessions": "unused",
+                        "aps": "unused",
+                        "Gpps": "y",
+                        "devices": "unused",
+                        "Traffic": "y"
+                    },
+                    "textFormat": "",
+                    "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+                    "legend": {
+                        "enabled": true
+                    }
+                },
+                "name": "Traffic_Pie"
+            },
+            "text": "",
+            "created_at": "2021-02-11T17:46:37.700Z",
+            "updated_at": "2021-02-11T18:13:12.302Z",
+            "options": {
+                "parameterMappings": {},
+                "isHidden": false,
+                "position": {
+                    "autoHeight": false,
+                    "sizeX": 3,
+                    "sizeY": 8,
+                    "maxSizeY": 1000,
+                    "maxSizeX": 6,
+                    "minSizeY": 5,
+                    "minSizeX": 1,
+                    "col": 0,
+                    "row": 24
+                }
+            },
+            "dashboard_id": 5,
+            "width": 1,
+            "id": 17
+        },
+        {
+            "visualization": {
+                "description": "",
+                "created_at": "2021-02-11T18:09:59.832Z",
+                "updated_at": "2021-02-11T18:10:22.092Z",
+                "id": 28,
+                "query": {
+                    "user": {
+                        "auth_type": "password",
+                        "is_disabled": false,
+                        "updated_at": "2021-02-11T21:16:34.503Z",
+                        "profile_image_url": "https://www.gravatar.com/avatar/d9f0669a3aa8a9b20e34aa730e79d2b2?s=40&d=identicon",
+                        "is_invitation_pending": false,
+                        "groups": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "id": 2,
+                        "name": "tolik",
+                        "created_at": "2020-07-26T15:36:04.920Z",
+                        "disabled_at": null,
+                        "is_email_verified": true,
+                        "active_at": "2021-02-11T21:15:37Z",
+                        "email": "anak@rol.ru"
+                    },
+                    "created_at": "2021-02-08T07:17:29.690Z",
+                    "latest_query_data_id": 24929,
+                    "schedule": null,
+                    "description": null,
+                    "tags": [],
+                    "updated_at": "2021-02-11T21:14:32.243Z",
+                    "last_modified_by": {
+                        "auth_type": "password",
+                        "is_disabled": false,
+                        "updated_at": "2021-02-11T21:16:34.503Z",
+                        "profile_image_url": "https://www.gravatar.com/avatar/d9f0669a3aa8a9b20e34aa730e79d2b2?s=40&d=identicon",
+                        "is_invitation_pending": false,
+                        "groups": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "id": 2,
+                        "name": "tolik",
+                        "created_at": "2020-07-26T15:36:04.920Z",
+                        "disabled_at": null,
+                        "is_email_verified": true,
+                        "active_at": "2021-02-11T21:15:37Z",
+                        "email": "anak@rol.ru"
+                    },
+                    "options": {
+                        "parameters": []
+                    },
+                    "is_safe": true,
+                    "version": 1,
+                    "query_hash": "fc0b2279aef910ecb6c4c6ee8de1a560",
+                    "is_archived": false,
+                    "query": "select\n    Time as DateTime,\n    concat (CITY_R, ', ', ADDRESS) as PointAddress,\n    (sum(AcctInputOctets) + sum(AcctOutputOctets))/1024/1024/1024 as Traffic,\n    (sum(AcctInputOctets) + sum(AcctOutputOctets))*8/1024/1024/1024/900 as Gpps,\n    uniq(AcctSessionId) as sessions,\n    uniq(CallingStationId) as devices,\n    uniq(NASIPAddress) as aps\nfrom default.wifi_sessions, default.wifi_ap_history\nwhere NASIPAddress=INT_IP and CONTRACT_ID='IL405' and (Time>now()-INTERVAL 3 DAY)\ngroup by DateTime, PointAddress\norder by Traffic desc",
+                    "api_key": "RUXHWIK8ucEJr9xhfxilBUdQgYJzLcn2YB6Lz8yq",
+                    "is_draft": false,
+                    "id": 9,
+                    "data_source_id": 1,
+                    "name": "Leroy Merlin"
+                },
+                "type": "CHART",
+                "options": {
+                    "showDataLabels": true,
+                    "direction": {
+                        "type": "counterclockwise"
+                    },
+                    "missingValuesAsZero": true,
+                    "error_y": {
+                        "visible": true,
+                        "type": "data"
+                    },
+                    "numberFormat": "0,0[.]00000",
+                    "yAxis": [
+                        {
+                            "type": "linear"
+                        },
+                        {
+                            "type": "linear",
+                            "opposite": true
+                        }
+                    ],
+                    "series": {
+                        "stacking": null,
+                        "error_y": {
+                            "visible": true,
+                            "type": "data"
+                        }
+                    },
+                    "globalSeriesType": "pie",
+                    "percentFormat": "0[.]00%",
+                    "sortX": true,
+                    "seriesOptions": {
+                        "aps": {
+                            "zIndex": 1,
+                            "index": 0,
+                            "type": "pie",
+                            "yAxis": 0
+                        },
+                        "sessions": {
+                            "zIndex": 0,
+                            "index": 0,
+                            "type": "pie",
+                            "yAxis": 0
+                        }
+                    },
+                    "xAxis": {
+                        "labels": {
+                            "enabled": true
+                        },
+                        "type": "-"
+                    },
+                    "dateTimeFormat": "YYYY-MM-DD HH:mm",
+                    "columnMapping": {
+                        "aps": "y",
+                        "PointAddress": "x",
+                        "sessions": "y"
+                    },
+                    "textFormat": "",
+                    "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+                    "legend": {
+                        "enabled": true
+                    }
+                },
+                "name": "Sessions_Pie"
+            },
+            "text": "",
+            "created_at": "2021-02-11T18:10:22.092Z",
+            "updated_at": "2021-02-11T18:14:56.821Z",
+            "options": {
+                "parameterMappings": {},
+                "isHidden": false,
+                "position": {
+                    "autoHeight": false,
+                    "sizeX": 3,
+                    "sizeY": 8,
+                    "maxSizeY": 1000,
+                    "maxSizeX": 6,
+                    "minSizeY": 5,
+                    "minSizeX": 1,
+                    "col": 3,
+                    "row": 24
+                }
+            },
+            "dashboard_id": 5,
+            "width": 1,
+            "id": 19
+        },
+        {
+            "visualization": {
+                "description": "",
+                "created_at": "2021-02-08T07:48:35.331Z",
+                "updated_at": "2021-02-11T14:50:29.272Z",
+                "id": 20,
+                "query": {
+                    "user": {
+                        "auth_type": "password",
+                        "is_disabled": false,
+                        "updated_at": "2021-02-11T21:16:34.503Z",
+                        "profile_image_url": "https://www.gravatar.com/avatar/d9f0669a3aa8a9b20e34aa730e79d2b2?s=40&d=identicon",
+                        "is_invitation_pending": false,
+                        "groups": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "id": 2,
+                        "name": "tolik",
+                        "created_at": "2020-07-26T15:36:04.920Z",
+                        "disabled_at": null,
+                        "is_email_verified": true,
+                        "active_at": "2021-02-11T21:15:37Z",
+                        "email": "anak@rol.ru"
+                    },
+                    "created_at": "2021-02-08T07:17:29.690Z",
+                    "latest_query_data_id": 24929,
+                    "schedule": null,
+                    "description": null,
+                    "tags": [],
+                    "updated_at": "2021-02-11T21:14:32.243Z",
+                    "last_modified_by": {
+                        "auth_type": "password",
+                        "is_disabled": false,
+                        "updated_at": "2021-02-11T21:16:34.503Z",
+                        "profile_image_url": "https://www.gravatar.com/avatar/d9f0669a3aa8a9b20e34aa730e79d2b2?s=40&d=identicon",
+                        "is_invitation_pending": false,
+                        "groups": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "id": 2,
+                        "name": "tolik",
+                        "created_at": "2020-07-26T15:36:04.920Z",
+                        "disabled_at": null,
+                        "is_email_verified": true,
+                        "active_at": "2021-02-11T21:15:37Z",
+                        "email": "anak@rol.ru"
+                    },
+                    "options": {
+                        "parameters": []
+                    },
+                    "is_safe": true,
+                    "version": 1,
+                    "query_hash": "fc0b2279aef910ecb6c4c6ee8de1a560",
+                    "is_archived": false,
+                    "query": "select\n    Time as DateTime,\n    concat (CITY_R, ', ', ADDRESS) as PointAddress,\n    (sum(AcctInputOctets) + sum(AcctOutputOctets))/1024/1024/1024 as Traffic,\n    (sum(AcctInputOctets) + sum(AcctOutputOctets))*8/1024/1024/1024/900 as Gpps,\n    uniq(AcctSessionId) as sessions,\n    uniq(CallingStationId) as devices,\n    uniq(NASIPAddress) as aps\nfrom default.wifi_sessions, default.wifi_ap_history\nwhere NASIPAddress=INT_IP and CONTRACT_ID='IL405' and (Time>now()-INTERVAL 3 DAY)\ngroup by DateTime, PointAddress\norder by Traffic desc",
+                    "api_key": "RUXHWIK8ucEJr9xhfxilBUdQgYJzLcn2YB6Lz8yq",
+                    "is_draft": false,
+                    "id": 9,
+                    "data_source_id": 1,
+                    "name": "Leroy Merlin"
+                },
+                "type": "CHART",
+                "options": {
+                    "showDataLabels": false,
+                    "direction": {
+                        "type": "counterclockwise"
+                    },
+                    "missingValuesAsZero": false,
+                    "error_y": {
+                        "visible": true,
+                        "type": "data"
+                    },
+                    "numberFormat": "0,0[.]00000",
+                    "yAxis": [
+                        {
+                            "type": "linear"
+                        },
+                        {
+                            "type": "linear",
+                            "opposite": true
+                        }
+                    ],
+                    "series": {
+                        "stacking": "stack",
+                        "percentValues": false,
+                        "error_y": {
+                            "visible": true,
+                            "type": "data"
+                        }
+                    },
+                    "globalSeriesType": "column",
+                    "percentFormat": "0[.]00%",
+                    "sortX": true,
+                    "valuesOptions": {},
+                    "xAxis": {
+                        "labels": {
+                            "enabled": true
+                        },
+                        "type": "-"
+                    },
+                    "dateTimeFormat": "YYYY-MM-DD HH:mm",
+                    "columnMapping": {
+                        "aps": "unused",
+                        "Gpps": "y",
+                        "PointAddress": "series",
+                        "DateTime": "x"
+                    },
+                    "textFormat": "",
+                    "customCode": "// Available variables are x, ys, element, and Plotly\n// Type console.log(x, ys); for more info about x and ys\n// To plot your graph call Plotly.plot(element, ...)\n// Plotly examples and docs: https://plot.ly/javascript/",
+                    "legend": {
+                        "enabled": true
+                    }
+                },
+                "name": "Gbps"
+            },
+            "text": "",
+            "created_at": "2021-02-11T17:44:06.750Z",
+            "updated_at": "2021-02-11T17:47:01.634Z",
+            "options": {
+                "parameterMappings": {},
+                "isHidden": false,
+                "position": {
+                    "autoHeight": false,
+                    "sizeX": 6,
+                    "sizeY": 8,
+                    "maxSizeY": 1000,
+                    "maxSizeX": 6,
+                    "minSizeY": 5,
+                    "minSizeX": 1,
+                    "col": 0,
+                    "row": 16
+                }
+            },
+            "dashboard_id": 5,
+            "width": 1,
+            "id": 16
+        },
+        {
+            "visualization": {
+                "description": "",
+                "created_at": "2021-02-02T05:52:14.979Z",
+                "updated_at": "2021-02-11T20:49:43.063Z",
+                "id": 18,
+                "query": {
+                    "user": {
+                        "auth_type": "password",
+                        "is_disabled": false,
+                        "updated_at": "2021-02-11T21:16:34.503Z",
+                        "profile_image_url": "https://www.gravatar.com/avatar/d9f0669a3aa8a9b20e34aa730e79d2b2?s=40&d=identicon",
+                        "is_invitation_pending": false,
+                        "groups": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "id": 2,
+                        "name": "tolik",
+                        "created_at": "2020-07-26T15:36:04.920Z",
+                        "disabled_at": null,
+                        "is_email_verified": true,
+                        "active_at": "2021-02-11T21:15:37Z",
+                        "email": "anak@rol.ru"
+                    },
+                    "created_at": "2021-02-02T05:45:51.319Z",
+                    "latest_query_data_id": 24927,
+                    "schedule": null,
+                    "description": null,
+                    "tags": [],
+                    "updated_at": "2021-02-11T20:43:55.181Z",
+                    "last_modified_by": {
+                        "auth_type": "password",
+                        "is_disabled": false,
+                        "updated_at": "2021-02-11T21:16:34.503Z",
+                        "profile_image_url": "https://www.gravatar.com/avatar/d9f0669a3aa8a9b20e34aa730e79d2b2?s=40&d=identicon",
+                        "is_invitation_pending": false,
+                        "groups": [
+                            1,
+                            2,
+                            3
+                        ],
+                        "id": 2,
+                        "name": "tolik",
+                        "created_at": "2020-07-26T15:36:04.920Z",
+                        "disabled_at": null,
+                        "is_email_verified": true,
+                        "active_at": "2021-02-11T21:15:37Z",
+                        "email": "anak@rol.ru"
+                    },
+                    "options": {
+                        "parameters": []
+                    },
+                    "is_safe": true,
+                    "version": 1,
+                    "query_hash": "64e57f18e0a649c64e96a29237265576",
+                    "is_archived": false,
+                    "query": "select\n    max(Time) as last_activity,\n    concat (CITY_R, ', ', ADDRESS) as PointAddress,\n    round(GPS_LONGITUDE, 2) as lon,\n    round(GPS_LATITUDE, 2) as lat,\n    multiIf (\n    ceil(log(ceil((now() - max(Time))/900)))=0, '1 activity < 15 mins',\n    ceil(log(ceil((now() - max(Time))/900)))=1, '2 activity < 30 mins',\n    ceil(log(ceil((now() - max(Time))/900)))=2, '3 activity < 2 hours',\n    ceil(log(ceil((now() - max(Time))/900)))=3, '4 activity < 5 hours',\n    ceil(log(ceil((now() - max(Time))/900)))=4, '5 activity < 9 hours',\n    ceil(log(ceil((now() - max(Time))/900)))=5, '6 activity < 2 days',\n    ceil(log(ceil((now() - max(Time))/900)))=6, '7 activity < 4 days',\n    '8 activity > 4 days'\n    ) as Layer\nfrom default.wifi_sessions, default.wifi_ap_history\nwhere NASIPAddress=INT_IP and (Time>now()-INTERVAL 7 DAY) and CONTRACT_ID='IL405'\ngroup by CITY_R, ADDRESS, lon,lat\norder by Layer",
+                    "api_key": "G5WaMpG9HybkFdt7rrn1AY0tqJpM1Rwiz4aMyE6F",
+                    "is_draft": false,
+                    "id": 8,
+                    "data_source_id": 1,
+                    "name": "Map"
+                },
+                "type": "MAP",
+                "options": {
+                    "borderColor": "#356AFF",
+                    "customizeMarkers": true,
+                    "foregroundColor": "#ffffff",
+                    "clusterMarkers": true,
+                    "iconFont": "wifi",
+                    "bounds": {
+                        "_southWest": {
+                            "lat": 41.57436130598913,
+                            "lng": 22.338834008459276
+                        },
+                        "_northEast": {
+                            "lat": 66.40795547978848,
+                            "lng": 108.12008400845929
+                        }
+                    },
+                    "backgroundColor": "#356AFF",
+                    "latColName": "lat",
+                    "groups": {
+                        "7 activity < 4 days": {
+                            "color": "#ff7f20"
+                        },
+                        "3 activity < 2 hours": {
+                            "color": "#ffff20"
+                        },
+                        "2 activity < 30 mins": {
+                            "color": "#2ca02c"
+                        },
+                        "8 activity > 4 days": {
+                            "color": "#ff2020"
+                        },
+                        "1 activity < 15 mins": {
+                            "color": "#20ff20"
+                        },
+                        "6 activity < 2 days": {
+                            "color": "#7f207f"
+                        },
+                        "5 activity < 9 hours": {
+                            "color": "#2020ff"
+                        },
+                        "4 activity < 5 hours": {
+                            "color": "#20c0c0"
+                        }
+                    },
+                    "lonColName": "lon",
+                    "classify": "Layer",
+                    "iconShape": "marker"
+                },
+                "name": "Map"
+            },
+            "text": "",
+            "created_at": "2021-02-11T17:48:09.337Z",
+            "updated_at": "2021-02-11T18:13:12.296Z",
+            "options": {
+                "parameterMappings": {},
+                "isHidden": false,
+                "position": {
+                    "autoHeight": false,
+                    "sizeX": 6,
+                    "sizeY": 8,
+                    "maxSizeY": 1000,
+                    "maxSizeX": 6,
+                    "minSizeY": 1,
+                    "minSizeX": 2,
+                    "col": 0,
+                    "row": 32
+                }
+            },
+            "dashboard_id": 5,
+            "width": 1,
+            "id": 18
+        }
+    ],
+    "dashboard_filters_enabled": false
+}

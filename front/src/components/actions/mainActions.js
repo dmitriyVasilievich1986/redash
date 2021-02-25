@@ -1,0 +1,73 @@
+import TYPE_ACTIONS from './types'
+
+export const setIsLoading = newStatus => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.SET_IS_LOADING,
+        payload: newStatus,
+    })
+}
+
+export const getAllDashboards = newDashboardArray => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.GET_ALL_DASHBOARDS,
+        payload: newDashboardArray,
+    })
+}
+
+export const updateVisualArray = (newVisualArray = []) => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.UPDATE_VISUAL_ARRAY,
+        payload: newVisualArray,
+    })
+}
+
+export const updateDashboards = newDashboard => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.UPDATE_DASHBOARDS,
+        payload: newDashboard,
+    })
+}
+
+export const updateQueries = newVisualization => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.UPDATE_QUERIES,
+        payload: newVisualization,
+    })
+}
+
+export const updateQuerie = newQ => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.UPDATE_QUERIE,
+        payload: newQ,
+    })
+}
+
+export const updateVisualizations = newVisualizations => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.UPDATE_VISUALIZATIONS,
+        payload: newVisualizations,
+    })
+}
+
+export const updateVisualization = newVisualizations => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.UPDATE_VISUALIZATIONS,
+        payload: newVisualizations,
+    })
+}
+
+export const filterArray = e => (dispatch, getState) => {
+    const value = e.target.value
+    const newArray = getState().main.unfilteredArray.filter(
+        d => d.tags.map(t => t.toLowerCase().indexOf(value.toLowerCase()) >= 0).indexOf(true) >= 0 ||
+            value == "" ||
+            d.name.toLowerCase().indexOf(value.toLowerCase()) >= 0
+    )
+    dispatch({
+        type: TYPE_ACTIONS.FILTER_DASHBOARDS,
+        payload: {
+            newArray: newArray,
+            tag: value,
+        },
+    })
+}

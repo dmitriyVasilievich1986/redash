@@ -1,0 +1,51 @@
+a{
+    color: black;
+    cursor: pointer;
+    border-bottom: 1px solid gray;
+    text-decoration: none;
+}
+h3{
+    text-align: center;
+}
+.container{
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.input-group{
+    flex: content;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+.dashboard{
+    border:1px solid black;
+    border-radius: 5px;
+    margin-top: 2rem;
+    padding-left: 1rem;
+    padding-bottom: 1rem;
+}
+.querie{
+    border:1px solid black;
+    border-radius: 5px;
+    margin-top: 1rem;
+}
+.querie-header{
+    cursor: pointer;
+    width: 100%;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    background-color: lightgray;
+    text-align: center;
+    align-items: center;
+}
+.edit-button{
+    cursor: pointer;
+    background-color: lightgray;
+    margin-right: 1rem;
+    padding-left: 2rem;
+    padding-right: 2rem;
+    border-radius: 5px;
+    border: 0;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
