@@ -40,6 +40,7 @@ h3{
 }
 .edit-button{
     cursor: pointer;
+    margin-top: 1rem;
     background-color: lightgray;
     margin-right: 1rem;
     padding-left: 2rem;
@@ -48,4 +49,7 @@ h3{
     border: 0;
     padding-top: 4px;
     padding-bottom: 4px;
+}
+.dont-show{
+    display: none;
 }

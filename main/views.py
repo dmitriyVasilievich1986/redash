@@ -231,42 +231,62 @@ def set_new_visualization(data, *args, **kwargs):
     response = Redash.post("visualizations", context).json()
     return {"payload": response}
 
+
 def post_refresh_querrie(data, *args, **kwargs):
     pk = data.get("id", None)
     if pk is None:
         return {"message": "Bad request"}
-    context = {'message': 'empty'}
+    context = {"message": "empty"}
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
     response = Redash.post(f"queries/{pk}/refresh", context).json()
-    return {'payload': response}
+    return {"payload": response}
+
 
 def create_querrie(data, *args, **kwargs):
     context = {
-        'data_source_id': 42671,
-        'name': data.get('name', 'new querrie'),
-        'query': data.get('query', ''),
+        "data_source_id": 42671,
+        "name": data.get("name", "new querrie"),
+        "query": data.get("query", ""),
     }
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
     response = Redash.post(f"queries", context).json()
-    return {'payload': response}
+    return {"payload": response}
+
 
 def create_dashboard(data, *args, **kwargs):
+    map_id = create_querrie({"name": "map_querrie", "query": data.get("map", "")})[
+        "payload"
+    ]["id"]
+    chart_id = create_querrie(
+        {"name": "chart_querrie", "query": data.get("chart", "")}
+    )["payload"]["id"]
     context = {
-        'name': data.get('name', 'new dashboard'),
+        "name": data.get("name", "new dashboard"),
     }
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
     response = Redash.post(f"dashboards", context).json()
-    return {'payload': response}
+    pk = response.get("id", None)
+    context = {
+        "name": response.get("name", ""),
+        "tags": [
+            f"querie_{map_id}",
+            f"querie_{chart_id}",
+        ],
+    }
+    response = Redash.post(f"dashboards/{pk}", context).json()
+    return {"payload": response}
+
 
 def publish_dashboard(data, *args, **kwargs):
     pk = data.get("id", None)
     if pk is None:
         return {"message": "Bad request"}
-    context = {'is_draft': False}
+    context = {"is_draft": False}
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
     Redash.post(f"dashboards/{pk}", context).json()
     response = Redash.post(f"dashboards/{pk}/share", context).json()
-    return {'payload': response}
+    return {"payload": response}
+
 
 @csrf_exempt
 def index_view(request, *args, **kwargs):
