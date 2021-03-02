@@ -46,10 +46,18 @@ function Query(props) {
         }
         sendPostData(props.path, context, addVisual, props.setIsLoading)
     }
+    const sendRefreshQuerrie = () => {
+        const context = {
+            method: "post_refresh_querrie",
+            id: props.q.id,
+        }
+        sendPostData(props.path, context, () => { props.setIsLoading(false) }, props.setIsLoading)
+    }
     return (
         <div className="querie">
             <div className="querie-header" onClick={() => updateShow(!show)}>{props.q.name}</div>
             <div style={show ? { marginLeft: '1rem' } : { marginLeft: "1rem", display: 'none' }}>
+                <button onClick={sendRefreshQuerrie} className="edit-button">Обновить</button>
                 <div style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}>
                     <label style={{ marginRight: "5px" }}>Название:</label>
                     <input

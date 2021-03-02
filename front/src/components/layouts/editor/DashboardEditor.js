@@ -5,15 +5,18 @@ import { connect } from 'react-redux'
 import Query from './Query'
 import Loading from '../dashboardList/Loading'
 import getChangedArray from '../common/getChangedArray.ts'
+import moduleName from './CreateQuerrie'
 
 import Tags from '../dashboardList/Tags'
 import sendPostData from '../common/sendPostData'
+import CreateQuerrie from './CreateQuerrie'
 
 function DashboardEditor(props) {
     const dashboard = props.unfilteredArray.filter(d => d.slug == props.match.params.dashboardSlug)[0]
     const visualArray = dashboard.widgets ? dashboard.widgets.map(w => w.visualization.id) : []
     const [name, updateName] = useState(dashboard.name)
     const [tags, updateTags] = useState(dashboard.tags)
+    const [url, updateURL] = useState(dashboard.public_url ? dashboard.public_url.replace('172.16.0.243', 'stats.beelinewifi.ru') : null)
     const [queries, updateQueries] = useState(props.queries.map(q => {
         return {
             ...q, visualizations: q.visualizations.map(v => {
@@ -84,6 +87,13 @@ function DashboardEditor(props) {
         updateDashboard()
         sendUpdateVisualization()
     }
+    const sendPublish = () => {
+        const context = {
+            method: "publish_dashboard",
+            id: dashboard.id,
+        }
+        sendPostData(props.path, context, data => { updateURL(data.public_url); props.setIsLoading(false) }, props.setIsLoading)
+    }
     if (props.isLoading)
         return (<Loading />)
     return (
@@ -98,6 +108,10 @@ function DashboardEditor(props) {
                     value={name}
                     onChange={e => updateName(e.target.value)} />
             </div>
+            {url ?
+                <label style={{ marginRight: "5px" }}>Ссылка: <a href={url}>Dashboard</a></label> :
+                <button onClick={sendPublish} className="edit-button">Опубликовать</button>
+            }
             <Tags
                 username={props.username}
                 tags={tags}
@@ -111,6 +125,7 @@ function DashboardEditor(props) {
             <button style={{ marginTop: "1rem" }} onClick={sendDataToChange}>
                 Сохранить изменения
                 </button>
+            <CreateQuerrie updateQuerie={updateQueries} queries={queries} />
         </div>
     )
 }

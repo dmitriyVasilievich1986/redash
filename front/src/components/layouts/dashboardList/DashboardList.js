@@ -1,9 +1,10 @@
 import React from 'react'
 
-import { filterArray } from '../../actions/mainActions'
+import { filterArray, setIsLoading, addNewDashboard } from '../../actions/mainActions'
 import { connect } from 'react-redux'
 import Dashboard from './Dashboard'
 import Loading from './Loading'
+import AddDashboard from './AddDashboard'
 
 function DashboardList(props) {
     if (props.isLoading)
@@ -22,6 +23,7 @@ function DashboardList(props) {
             {props.filteredArray.map(
                 d => <Dashboard key={d.id} d={d} />
             )}
+            {props.username == 'admin' ? <AddDashboard /> : ""}
         </div>
     )
 }
@@ -29,7 +31,8 @@ function DashboardList(props) {
 const mapStateToProps = state => ({
     filteredArray: state.main.filteredArray,
     isLoading: state.main.isLoading,
+    username: state.main.username,
     tag: state.main.tag,
 })
 
-export default connect(mapStateToProps, { filterArray })(DashboardList)
+export default connect(mapStateToProps, { filterArray, setIsLoading, addNewDashboard })(DashboardList)

@@ -65,6 +65,12 @@ export default function (state = initState, action) {
                 queries: newQ,
                 isLoading: false,
             }
+        case TYPE_ACTIONS.ADD_NEW_QUERRIE:
+            return {
+                ...state,
+                queries: [...state.queries, action.payload],
+                isLoading: false,
+            }
         case TYPE_ACTIONS.UPDATE_QUERIES:
             const queries = [...state.queries.map(q => {
                 const newVis = getChangedArray(q.visualizations.map(v => { return { ...v, inDashboard: false } }), action.payload)
@@ -96,6 +102,13 @@ export default function (state = initState, action) {
                 ...state,
                 tag: action.payload.tag,
                 filteredArray: action.payload.newArray,
+            }
+        case TYPE_ACTIONS.ADD_NEW_DASHBOARD:
+            return {
+                ...state,
+                isLoading: false,
+                filteredArray: [...state.filteredArray, action.payload],
+                unfilteredArray: [...state.unfilteredArray, action.payload],
             }
         case TYPE_ACTIONS.UPDATE_DASHBOARDS:
             const newDashboardList = getChangedArray(state.unfilteredArray, [action.payload])

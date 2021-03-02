@@ -14,6 +14,20 @@ export const getAllDashboards = newDashboardArray => dispatch => {
     })
 }
 
+export const addNewQuerrie = newQ => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.ADD_NEW_QUERRIE,
+        payload: newQ,
+    })
+}
+
+export const addNewDashboard = newD => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.ADD_NEW_DASHBOARD,
+        payload: newD,
+    })
+}
+
 export const updateVisualArray = (newVisualArray = []) => dispatch => {
     dispatch({
         type: TYPE_ACTIONS.UPDATE_VISUAL_ARRAY,

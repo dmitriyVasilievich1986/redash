@@ -10,10 +10,10 @@ export default function (path, arrayObject, functionUpdate, functionSetIsLoading
         .then(data => {
             if (data.data.message) {
                 console.log(data.data.message)
-                functionSetIsLoading(false)
             } else if (data.data.payload) {
                 functionUpdate(data.data.payload)
             }
+            functionSetIsLoading(false)
         })
         .catch(err => {
             console.log(err)
