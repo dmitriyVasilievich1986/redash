@@ -254,27 +254,56 @@ def create_querrie(data, *args, **kwargs):
 
 
 def create_dashboard(data, *args, **kwargs):
-    map_id = create_querrie({"name": "map_querrie", "query": data.get("map", "")})[
-        "payload"
-    ]["id"]
-    chart_id = create_querrie(
-        {"name": "chart_querrie", "query": data.get("chart", "")}
-    )["payload"]["id"]
+    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
+    payload = dict()
+    visualizations = list()
+    for x, y in [("map", "Карта"), ("chart", "Графики")]:
+        payload[x] = create_querrie({"name": f"{x}_querrie", "query": data.get(x, "")})[
+            "payload"
+        ]
+        visualizations.append(payload[x]["visualizations"][0]["id"])
+        Redash.post(
+            f"visualizations/{visualizations[-1]}",
+            {"name": f"{y}_таблица"},
+        )
     context = {
         "name": data.get("name", "new dashboard"),
     }
-    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    response = Redash.post(f"dashboards", context).json()
+    response = Redash.post(
+        f"dashboards", context
+    ).json()  # context = {'name': 'Таблица - ' + table_name}
     pk = response.get("id", None)
+    slug = response.get("slug", "")
+    for key, name in [
+        ("Traffic", "Трафик"),
+        ("Gpps", "GPPS"),
+        ("sessions", "Сессии"),
+        ("devices", "Устройства"),
+        ("aps", "Aps"),
+    ]:
+        visualizations.append(
+            set_new_visualization(
+                {
+                    "id": payload["chart"]["id"],
+                    "name": f"{name}_график",
+                    "line": key,
+                }  # 'name': 'График_' + visual_name,
+            )["payload"]["id"]
+        )
+    set_visualization_list(
+        {"slug": slug, "visualization_list": ",".join(str(x) for x in visualizations)}
+    )
     context = {
         "name": response.get("name", ""),
         "tags": [
-            f"querie_{map_id}",
-            f"querie_{chart_id}",
+            f"querie_{payload['map']['id']}",
+            f"querie_{payload['chart']['id']}",
         ],
     }
-    response = Redash.post(f"dashboards/{pk}", context).json()
-    return {"payload": response}
+    payload["dashboard"] = Redash.post(f"dashboards/{pk}", context).json()
+    for x in ["map", "chart"]:
+        payload[x] = Redash.get(f'queries/{payload[x]["id"]}').json()
+    return {"payload": payload}
 
 
 def publish_dashboard(data, *args, **kwargs):

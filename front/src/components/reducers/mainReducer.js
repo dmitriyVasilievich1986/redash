@@ -107,8 +107,9 @@ export default function (state = initState, action) {
             return {
                 ...state,
                 isLoading: false,
-                filteredArray: [...state.filteredArray, action.payload],
-                unfilteredArray: [...state.unfilteredArray, action.payload],
+                filteredArray: [...state.filteredArray, action.payload.dashboard],
+                unfilteredArray: [...state.unfilteredArray, action.payload.dashboard],
+                queries: [...state.queries, action.payload.map, action.payload.chart],
             }
         case TYPE_ACTIONS.UPDATE_DASHBOARDS:
             const newDashboardList = getChangedArray(state.unfilteredArray, [action.payload])
