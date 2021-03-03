@@ -3,6 +3,8 @@ import getChangedArray from '../layouts/common/getChangedArray.ts'
 
 const initState = {
     path: window.location.pathname,
+    filteredDashboardsArray: [],
+    dashboardsArray: [],
     unfilteredArray: [],
     visualizations: [],
     filteredArray: [],
@@ -14,7 +16,30 @@ const initState = {
 }
 
 export default function (state = initState, action) {
+    const filterDashboards = (dashboards, tag = state.tag) => {
+        const filteredDashboards = dashboards
+            .filter(db => state.username == 'admin' || db.tags.indexOf(state.username) >= 0)
+            .filter(db => db.name.toLowerCase().indexOf(tag.toLowerCase()) >= 0 ||
+                db.tags.map(t => t.toLowerCase().indexOf(tag.toLowerCase()) >= 0).indexOf(true) >= 0
+            )
+        return filteredDashboards
+    }
     switch (action.type) {
+        case TYPE_ACTIONS.UPDATE_STATE:
+            const filteredDashboardsArray = action.payload.tag ? filterDashboards(state.dashboardsArray, action.payload.tag) : state.filteredDashboardsArray
+            return {
+                ...state,
+                ...action.payload,
+                filteredDashboardsArray: filteredDashboardsArray,
+            }
+        case TYPE_ACTIONS.UPDATE_DASHBOARDS:
+            const dashboards = getChangedArray(state.dashboardsArray, action.payload, false, true)
+            return {
+                ...state,
+                isLoading: false,
+                dashboardsArray: dashboards,
+                filteredDashboardsArray: filterDashboards(dashboards),
+            }
         case TYPE_ACTIONS.SET_IS_LOADING:
             return {
                 ...state,
@@ -111,19 +136,19 @@ export default function (state = initState, action) {
                 unfilteredArray: [...state.unfilteredArray, action.payload.dashboard],
                 queries: [...state.queries, action.payload.map, action.payload.chart],
             }
-        case TYPE_ACTIONS.UPDATE_DASHBOARDS:
-            const newDashboardList = getChangedArray(state.unfilteredArray, [action.payload])
-            const newFilteredArray = newDashboardList.filter(
-                d => d.tags.map(t => t.toLowerCase().indexOf(state.tag.toLowerCase()) >= 0).indexOf(true) >= 0 ||
-                    state.tag == "" ||
-                    d.name.toLowerCase().indexOf(state.tag.toLowerCase()) >= 0
-            )
-            return {
-                ...state,
-                unfilteredArray: newDashboardList,
-                filteredArray: newFilteredArray,
-                isLoading: false,
-            }
+        // case TYPE_ACTIONS.UPDATE_DASHBOARDS:
+        //     const newDashboardList = getChangedArray(state.unfilteredArray, [action.payload])
+        //     const newFilteredArray = newDashboardList.filter(
+        //         d => d.tags.map(t => t.toLowerCase().indexOf(state.tag.toLowerCase()) >= 0).indexOf(true) >= 0 ||
+        //             state.tag == "" ||
+        //             d.name.toLowerCase().indexOf(state.tag.toLowerCase()) >= 0
+        //     )
+        //     return {
+        //         ...state,
+        //         unfilteredArray: newDashboardList,
+        //         filteredArray: newFilteredArray,
+        //         isLoading: false,
+        //     }
         case TYPE_ACTIONS.GET_ALL_DASHBOARDS:
             const unfilteredArray = action.payload.filter(a => state.username == 'admin' || a.tags.indexOf(state.username) >= 0)
             return {

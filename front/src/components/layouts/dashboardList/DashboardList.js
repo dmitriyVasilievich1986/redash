@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { filterArray, setIsLoading, addNewDashboard } from '../../actions/mainActions'
+import { updateDashboards, updateProperties } from '../../actions/mainActions'
 import { connect } from 'react-redux'
 import Dashboard from './Dashboard'
 import Loading from './Loading'
@@ -14,25 +14,25 @@ function DashboardList(props) {
             <div className="input-group">
                 <span style={{ marginRight: "1rem" }}>Фильтр по тэгам или имени:</span>
                 <input
-                    type="text"
+                    onChange={e => props.updateProperties({ tag: e.target.value })}
                     placeholder="Тэг или название"
                     value={props.tag}
-                    onChange={props.filterArray}
+                    type="text"
                 />
             </div>
-            {props.filteredArray.map(
+            {props.dashboards.map(
                 d => <Dashboard key={d.id} d={d} />
             )}
-            {props.username == 'admin' ? <AddDashboard /> : ""}
+            {props.username == adminName ? <AddDashboard /> : ""}
         </div>
     )
 }
 
 const mapStateToProps = state => ({
-    filteredArray: state.main.filteredArray,
+    dashboards: state.main.filteredDashboardsArray,
     isLoading: state.main.isLoading,
     username: state.main.username,
     tag: state.main.tag,
 })
 
-export default connect(mapStateToProps, { filterArray, setIsLoading, addNewDashboard })(DashboardList)
+export default connect(mapStateToProps, { updateDashboards, updateProperties })(DashboardList)

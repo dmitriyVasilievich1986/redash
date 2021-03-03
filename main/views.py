@@ -317,6 +317,10 @@ def publish_dashboard(data, *args, **kwargs):
     return {"payload": response}
 
 
+def get_user(data, *args, **kwargs):
+    return {"payload": {"username": "admin"}}
+
+
 @csrf_exempt
 def index_view(request, *args, **kwargs):
     if request.method == "POST":

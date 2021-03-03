@@ -1,5 +1,23 @@
 import TYPE_ACTIONS from './types'
 
+//#region last versions
+
+export const updateDashboards = newDashboard => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.UPDATE_DASHBOARDS,
+        payload: newDashboard,
+    })
+}
+
+export const updateProperties = newState => dispatch => {
+    dispatch({
+        type: TYPE_ACTIONS.UPDATE_STATE,
+        payload: newState,
+    })
+}
+
+//#endregion
+
 export const setIsLoading = newStatus => dispatch => {
     dispatch({
         type: TYPE_ACTIONS.SET_IS_LOADING,
@@ -35,12 +53,7 @@ export const updateVisualArray = (newVisualArray = []) => dispatch => {
     })
 }
 
-export const updateDashboards = newDashboard => dispatch => {
-    dispatch({
-        type: TYPE_ACTIONS.UPDATE_DASHBOARDS,
-        payload: newDashboard,
-    })
-}
+
 
 export const updateQueries = newVisualization => dispatch => {
     dispatch({

@@ -44,14 +44,8 @@ function sendPostData(method, type) {
 
 function App() {
     useEffect(() => {
-        store.dispatch({
-            type: TYPE_ACTIONS.SET_PROPERTIES,
-            payload: {
-                username: username,
-                path: currentPath,
-            }
-        })
-        sendPostData('get_all_dashboards', TYPE_ACTIONS.GET_ALL_DASHBOARDS)
+        sendPostData('get_user', TYPE_ACTIONS.UPDATE_STATE)
+        sendPostData('get_all_dashboards', TYPE_ACTIONS.UPDATE_DASHBOARDS)
         sendPostData('get_all_queries', TYPE_ACTIONS.GET_ALL_QUERIES)
     })
     return (

@@ -3,7 +3,14 @@ interface IarrayObjects {
     [index: string]: any;
 }
 
-export default function (unchangedArray: Array<IarrayObjects>, updatedArrayObject: Array<IarrayObjects>, toDelete: boolean = false): Array<IarrayObjects> {
+export default function (
+    unchangedArray: Array<IarrayObjects>,
+    updatedArrayOrObject: Array<IarrayObjects> | IarrayObjects,
+    toDelete: boolean = false,
+    canAppend: boolean = false,
+): Array<IarrayObjects> {
+
+    const updatedArrayObject: Array<IarrayObjects> = Array.isArray(updatedArrayOrObject) ? updatedArrayOrObject : [updatedArrayOrObject]
     let updatedArray: Array<IarrayObjects> = new Array<IarrayObjects>()
     const IDArray: Array<number> = updatedArrayObject.map((o: IarrayObjects) => o.id)
     if (toDelete)
@@ -18,8 +25,8 @@ export default function (unchangedArray: Array<IarrayObjects>, updatedArrayObjec
             }
             return a
         })
-        // if (!update)
-        //     updatedArrayObject.map((o: IarrayObjects) => { updatedArray.push(o) })
+        if (!update && canAppend)
+            updatedArrayObject.map((o: IarrayObjects) => { updatedArray.push(o) })
     }
     return updatedArray
 }
