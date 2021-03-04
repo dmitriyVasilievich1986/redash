@@ -18,15 +18,18 @@ const initState = {
 export default function (state = initState, action) {
     const filterDashboards = (dashboards, tag = state.tag) => {
         const filteredDashboards = dashboards
-            .filter(db => state.username == 'admin' || db.tags.indexOf(state.username) >= 0)
-            .filter(db => db.name.toLowerCase().indexOf(tag.toLowerCase()) >= 0 ||
+            .filter(db => state.username == adminName || db.tags.indexOf(state.username) >= 0)
+            .filter(db => tag == '' ||
+                db.name.toLowerCase().indexOf(tag.toLowerCase()) >= 0 ||
                 db.tags.map(t => t.toLowerCase().indexOf(tag.toLowerCase()) >= 0).indexOf(true) >= 0
             )
         return filteredDashboards
     }
     switch (action.type) {
         case TYPE_ACTIONS.UPDATE_STATE:
-            const filteredDashboardsArray = action.payload.tag ? filterDashboards(state.dashboardsArray, action.payload.tag) : state.filteredDashboardsArray
+            const filteredDashboardsArray = action.payload.tag || action.payload.username ?
+                filterDashboards(state.dashboardsArray, action.payload.tag) :
+                state.filteredDashboardsArray
             return {
                 ...state,
                 ...action.payload,
@@ -41,10 +44,27 @@ export default function (state = initState, action) {
                 filteredDashboardsArray: filterDashboards(dashboards),
             }
         case TYPE_ACTIONS.UPDATE_QUERIES:
+            const newQueries = getChangedArray(state.queries, action.payload, false, true)
+                .map(q => {
+                    return {
+                        updated: false,
+                        newName: q.name,
+                        updatedQuery: null,
+                        ...q,
+                        visualizations: q.visualizations.map(v => {
+                            return {
+                                updated: false,
+                                newName: v.name,
+                                inDashboard: false,
+                                ...v,
+                            }
+                        })
+                    }
+                })
             return {
                 ...state,
                 isLoading: false,
-                queries: getChangedArray(state.queries, action.payload, false, true),
+                queries: newQueries,
             }
         case TYPE_ACTIONS.SET_IS_LOADING:
             return {

@@ -11,41 +11,59 @@ import { DashboardList, DashboardEditor } from './layouts'
 
 const currentPath = window.location.pathname
 
-function setIsLoading(isLoading) {
-    store.dispatch({
-        type: TYPE_ACTIONS.UPDATE_STATE,
-        payload: { isLoading: isLoading },
-    })
-}
-
-function sendPostData(method, type) {
-    const [contextData, headers] = getContext({ method: method })
+function sendPostData(context, payloadFunction) {
+    const [contextData, headers] = getContext(context)
 
     axios.post(currentPath, contextData, headers)
         .then(data => {
-            if (data.data.message) {
+            if (data.data.message)
                 console.log(data.data.message)
-                setIsLoading(false)
-            } else if (data.data.payload) {
-                store.dispatch({
-                    type: type,
-                    payload: data.data.payload
-                })
-            }
+            else if (data.data.payload)
+                payloadFunction(data.data.payload)
         })
-        .catch(err => {
-            console.log(err)
-            setIsLoading(false)
-        })
+        .catch(err => console.log(err))
+}
+
+function storeDispatch(type, payload) {
+    store.dispatch({
+        type: type,
+        payload: payload,
+    })
 }
 
 function App() {
     useEffect(() => {
-        // setIsLoading(false)
-        setIsLoading(true)
-        sendPostData('get_user', TYPE_ACTIONS.UPDATE_STATE)
-        sendPostData('get_all_queries', TYPE_ACTIONS.UPDATE_QUERIES)
-        sendPostData('get_all_dashboards', TYPE_ACTIONS.UPDATE_DASHBOARDS)
+        sendPostData(
+            { method: 'get_user' },
+            username => storeDispatch(TYPE_ACTIONS.UPDATE_STATE, { username: username })
+        )
+        sendPostData(
+            { method: 'get_dashboards' },
+            dashboards => dashboards.results?.map(d => {
+                sendPostData(
+                    { method: 'get_dashboard', id: d.slug },
+                    db => storeDispatch(TYPE_ACTIONS.UPDATE_DASHBOARDS, db)
+                )
+            })
+        )
+        sendPostData(
+            { method: 'get_all_queries' },
+            queries => queries.results?.map(q => {
+                sendPostData(
+                    { method: 'get_querie', id: q.id },
+                    sq => storeDispatch(
+                        TYPE_ACTIONS.UPDATE_QUERIES,
+                        sq,
+                        // {
+                        //     ...sq,
+                        //     newName: sq.name,
+                        //     visualizations: sq.visualizations.map(v => { return { ...v, newName: v.name, inDashboard: false } }),
+                        // }
+                    )
+                )
+            })
+        )
+        storeDispatch(TYPE_ACTIONS.UPDATE_STATE, { isLoading: false })
     })
     return (
         <Provider store={store}>

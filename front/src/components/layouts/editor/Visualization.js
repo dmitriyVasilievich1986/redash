@@ -11,7 +11,7 @@ function Visualization(props) {
     }
     return (
         <div style={{ marginTop: "5px" }}>
-            <div style={{ display: "flex", alignItems: "center" }}>
+            <div className="row">
                 <input
                     onChange={() => visualizationUpdateHandler({ inDashboard: !props.v.inDashboard })}
                     style={{ marginRight: "5px" }}
@@ -19,10 +19,10 @@ function Visualization(props) {
                     type="checkbox"
                 />
                 <input
-                    onChange={e => visualizationUpdateHandler({ name: e.target.value })}
+                    onChange={e => visualizationUpdateHandler({ newName: e.target.value })}
                     className="form-control"
+                    value={props.v.newName}
                     placeholder="Название"
-                    value={props.v.name}
                     type="text"
                 />
             </div>

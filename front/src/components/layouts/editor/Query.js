@@ -53,7 +53,7 @@ function Query(props) {
             <div className="querie-header" onClick={() => updateShow(!show)}>{props.q.name}</div>
             <div style={show ? { marginLeft: '1rem' } : { marginLeft: "1rem", display: 'none' }}>
                 <button onClick={sendRefreshQuerrie} className="edit-button">Обновить</button>
-                <NameInput name={[props.q.name, n => querieUpdateHandler({ newName: n })]} />
+                <NameInput name={[props.q.newName, n => querieUpdateHandler({ newName: n })]} />
                 {queryString ?
                     <div className="row mt1">
                         <label style={{ marginRight: "5px" }}>Выбор шаблона:</label>

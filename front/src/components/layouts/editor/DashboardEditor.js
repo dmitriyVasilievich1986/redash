@@ -18,13 +18,13 @@ function getQueries(queries, dashboard) {
     const newQueries = queries.map(q => {
         return {
             ...q,
-            newName: null,
+            newName: q.name,
             updatedQuery: null,
             visualizations: q.visualizations.map(v => {
                 return {
                     ...v,
-                    newName: null,
                     updated: false,
+                    newName: v.name,
                     inDashboard: dashboardVisualizations.indexOf(v.id) >= 0,
                 }
             })
@@ -49,15 +49,49 @@ function DashboardEditor(props) {
         }
     })
 
-    const sendUpdateQuerie = () => {
-        props.queries.filter(q => q.updated).map(q => {
-            const context = {
-                method: 'set_visualization_list',
-                name: q.newName === null ? q.name : q.newName,
-                query: q.updatedQuery === null ? q.query : q.updatedQuery,
+    const discardUpdates = () => {
+        const newQueries = props.queries.map(q => {
+            return {
+                ...q,
+                updated: false,
+                visualizations: q.visualizations.map(v => {
+                    return {
+                        ...v,
+                        updated: false,
+                    }
+                })
             }
-            sendPostData(context, props.updateQueries)
         })
+        props.updateQueries(newQueries)
+    }
+
+    const sendButtonHandler = () => {
+        sendUpdateDashboard()
+        sendUpdateQuerie()
+        discardUpdates()
+    }
+    const sendUpdateDashboard = () => {
+        const context = {
+            method: 'update_dashboard',
+            id: dashboard.id,
+            name: name,
+            tags: tags,
+        }
+        sendPostData(context, props.updateDashboards, updated)
+        setUpdated(false)
+    }
+    const sendUpdateQuerie = () => {
+        props.queries
+            .filter(q => q.updated)
+            .map(q => {
+                const context = {
+                    query: q.updatedQuery === null ? q.query : q.updatedQuery,
+                    method: 'update_query',
+                    name: q.newName,
+                    id: q.id,
+                }
+                sendPostData(context, props.updateQueries)
+            })
     }
 
     // const updateVisualizationHandler = newVisualization => {
@@ -134,7 +168,7 @@ function DashboardEditor(props) {
     return (
         <div style={{ marginTop: "2rem" }}>
             <Link to={props.path}>Назад</Link>
-            <NameInput name={[name, updateName]} />
+            <NameInput name={[name, n => { updateName(n), setUpdated(true) }]} />
             {url ?
                 <label style={{ marginRight: "5px" }}>Ссылка: <a href={url}>Dashboard</a></label> :
                 <button className="edit-button">Опубликовать</button>
@@ -144,7 +178,7 @@ function DashboardEditor(props) {
                 username={props.username}
                 updated={setUpdated}
             />
-            <div style={{ marginTop: "1rem" }}>
+            <div className="mt1">
                 <label>Queries:</label>
                 {props.queries.map(q =>
                     <Query
@@ -154,7 +188,10 @@ function DashboardEditor(props) {
                     />
                 )}
             </div>
-            <button style={{ marginTop: "1rem" }} >
+            <button
+                className="mt1"
+                onClick={sendButtonHandler}
+            >
                 Сохранить изменения
                 </button>
             {/* <CreateQuerrie /> */}

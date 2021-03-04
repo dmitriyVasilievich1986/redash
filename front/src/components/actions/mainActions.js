@@ -17,18 +17,9 @@ export const updateProperties = newState => dispatch => {
 }
 
 export const updateQueries = newQueries => dispatch => {
-    const initState = {
-        newName: null,
-        updated: false,
-        updatedQuery: null,
-    }
-    const querie = Array.isArray(newQueries) ?
-        newQueries.map(q => { return { ...q, ...initState } }) :
-        { ...newQueries, ...initState }
-
     dispatch({
         type: TYPE_ACTIONS.UPDATE_QUERIES,
-        payload: querie,
+        payload: newQueries,
     })
 }
 

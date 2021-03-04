@@ -41,18 +41,6 @@ def update_visualization(data):
     return {"payload": response.json()}
 
 
-def get_query(query_id):
-    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    response = Redash.get(f"queries/{query_id}")
-    return response.json()
-
-
-def get_dashboard(slug="somenewtest"):
-    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    response = Redash.get(f"dashboards/{slug}")
-    return response.json()
-
-
 def add_widget(vs_id):
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
     response = Redash.add_widget(db_id=84180, vs_id=vs_id)
@@ -67,8 +55,17 @@ def delete_widget(id):
 
 def get_dashboards(*args, **kwargs):
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    response = Redash.get("dashboards")
-    return response.json()
+    response = Redash.get("dashboards").json()
+    return {"payload": response}
+
+
+def get_dashboard(data, *args, **kwargs):
+    slug = data.get("id", None)
+    if slug is None:
+        return {"message": "Bad request"}
+    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
+    response = Redash.get(f"dashboards/{slug}").json()
+    return {"payload": response}
 
 
 def get_all_dashboards(*args, **kwargs):
@@ -177,11 +174,16 @@ def update_query_list(query_list):
 
 def get_all_queries(*args, **kwargs):
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    queries = Redash.get(f"queries").json()
-    response = []
-    for x in queries["results"]:
-        z = Redash.get(f"queries/{x['id']}").json()
-        response.append(z)
+    response = Redash.get(f"queries").json()
+    return {"payload": response}
+
+
+def get_querie(data, *args, **kwargs):
+    pk = data.get("id", None)
+    if pk is None:
+        return {"message": "Bad request"}
+    Redash = RedashAPIClient(API_KEY, REDASH_HOST)
+    response = Redash.get(f"queries/{pk}").json()
     return {"payload": response}
 
 
@@ -319,7 +321,7 @@ def publish_dashboard(data, *args, **kwargs):
 
 
 def get_user(data, *args, **kwargs):
-    return {"payload": {"username": "admin"}}
+    return {"payload": "admin"}
 
 
 @csrf_exempt
