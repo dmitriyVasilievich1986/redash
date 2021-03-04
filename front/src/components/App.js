@@ -9,19 +9,16 @@ import axios from 'axios'
 import { DashboardList, DashboardEditor } from './layouts'
 
 
-const queryParams = new URLSearchParams(window.location.search)
-const username = queryParams.get('username')
 const currentPath = window.location.pathname
 
 function setIsLoading(isLoading) {
     store.dispatch({
-        type: TYPE_ACTIONS.SET_IS_LOADING,
-        payload: isLoading,
+        type: TYPE_ACTIONS.UPDATE_STATE,
+        payload: { isLoading: isLoading },
     })
 }
 
 function sendPostData(method, type) {
-    setIsLoading(true)
     const [contextData, headers] = getContext({ method: method })
 
     axios.post(currentPath, contextData, headers)
@@ -44,9 +41,11 @@ function sendPostData(method, type) {
 
 function App() {
     useEffect(() => {
+        // setIsLoading(false)
+        setIsLoading(true)
         sendPostData('get_user', TYPE_ACTIONS.UPDATE_STATE)
+        sendPostData('get_all_queries', TYPE_ACTIONS.UPDATE_QUERIES)
         sendPostData('get_all_dashboards', TYPE_ACTIONS.UPDATE_DASHBOARDS)
-        sendPostData('get_all_queries', TYPE_ACTIONS.GET_ALL_QUERIES)
     })
     return (
         <Provider store={store}>

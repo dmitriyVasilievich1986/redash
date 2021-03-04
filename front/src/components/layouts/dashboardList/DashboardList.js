@@ -1,10 +1,10 @@
 import React from 'react'
 
 import { updateDashboards, updateProperties } from '../../actions/mainActions'
+import AddDashboard from './AddDashboard'
+import Loading from '../common/Loading'
 import { connect } from 'react-redux'
 import Dashboard from './Dashboard'
-import Loading from './Loading'
-import AddDashboard from './AddDashboard'
 
 function DashboardList(props) {
     if (props.isLoading)

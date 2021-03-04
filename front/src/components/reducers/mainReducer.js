@@ -40,6 +40,12 @@ export default function (state = initState, action) {
                 dashboardsArray: dashboards,
                 filteredDashboardsArray: filterDashboards(dashboards),
             }
+        case TYPE_ACTIONS.UPDATE_QUERIES:
+            return {
+                ...state,
+                isLoading: false,
+                queries: getChangedArray(state.queries, action.payload, false, true),
+            }
         case TYPE_ACTIONS.SET_IS_LOADING:
             return {
                 ...state,

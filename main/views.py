@@ -228,7 +228,8 @@ def set_new_visualization(data, *args, **kwargs):
         "options": get_line_options(data.get("line", "")) if template == "line" else {},
     }
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    response = Redash.post("visualizations", context).json()
+    Redash.post("visualizations", context)
+    response = Redash.get(f"queries/{pk}").json()
     return {"payload": response}
 
 

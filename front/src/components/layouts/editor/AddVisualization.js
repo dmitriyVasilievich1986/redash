@@ -9,6 +9,7 @@ const MAP_LINE = ['Map']
 function AddVisualization(props) {
     const [name, updateName] = useState('Новая визуализация')
     const [line, updateLine] = useState(LINE[0])
+
     return (
         <div style={{ marginTop: "1rem" }}>
             <div style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}>

@@ -1,24 +1,30 @@
 import React from 'react'
 
 function Visualization(props) {
+    const visualizationUpdateHandler = newVisualization => {
+        const v = {
+            ...props.v,
+            ...newVisualization,
+            updated: true
+        }
+        props.visualizationUpdate(v)
+    }
     return (
         <div style={{ marginTop: "5px" }}>
             <div style={{ display: "flex", alignItems: "center" }}>
                 <input
+                    onChange={() => visualizationUpdateHandler({ inDashboard: !props.v.inDashboard })}
                     style={{ marginRight: "5px" }}
+                    checked={props.v.inDashboard}
                     type="checkbox"
-                    onChange={() => props.updateVisual({ id: props.v.id, inDashboard: !props.v.inDashboard })}
-                    checked={props.v.inDashboard} />
+                />
                 <input
-                    type="text"
+                    onChange={e => visualizationUpdateHandler({ name: e.target.value })}
                     className="form-control"
                     placeholder="Название"
                     value={props.v.name}
-                    onChange={e => props.updateVisual([{
-                        id: props.v.id,
-                        name: e.target.value,
-                        updated: true,
-                    }])} />
+                    type="text"
+                />
             </div>
         </div>
     )

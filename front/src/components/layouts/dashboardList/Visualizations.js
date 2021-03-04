@@ -1,20 +1,26 @@
-import React, { useState } from 'react'
 import getChangedArray from '../common/getChangedArray'
+import React from 'react'
 
 function Visualizations(props) {
-    const [check, updateCheck] = useState(props.v.inDashboard)
-    const [visualizations, updateVisualization] = props.vis
+    const [visualizations, updateVisualization] = props.visualizations
+
     const onChangeHandler = () => {
-        const newVisual = { ...props.v, inDashboard: !props.v.inDashboard, updated: true }
-        updateVisualization(getChangedArray(visualizations, [newVisual]))
+        const newVisual = {
+            ...props.v,
+            updated: true,
+            inDashboard: !props.v.inDashboard,
+        }
+        updateVisualization(getChangedArray(visualizations, newVisual))
     }
+
     return (
         <div style={{ display: "flex", alignItems: "center" }}>
             <input
                 style={{ marginRight: "5px" }}
-                type="checkbox"
+                checked={props.v.inDashboard}
                 onChange={onChangeHandler}
-                checked={props.v.inDashboard} />
+                type="checkbox"
+            />
             <p>{props.v.name}</p>
         </div>
     )

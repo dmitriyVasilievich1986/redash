@@ -16,6 +16,22 @@ export const updateProperties = newState => dispatch => {
     })
 }
 
+export const updateQueries = newQueries => dispatch => {
+    const initState = {
+        newName: null,
+        updated: false,
+        updatedQuery: null,
+    }
+    const querie = Array.isArray(newQueries) ?
+        newQueries.map(q => { return { ...q, ...initState } }) :
+        { ...newQueries, ...initState }
+
+    dispatch({
+        type: TYPE_ACTIONS.UPDATE_QUERIES,
+        payload: querie,
+    })
+}
+
 //#endregion
 
 export const setIsLoading = newStatus => dispatch => {
@@ -55,12 +71,7 @@ export const updateVisualArray = (newVisualArray = []) => dispatch => {
 
 
 
-export const updateQueries = newVisualization => dispatch => {
-    dispatch({
-        type: TYPE_ACTIONS.UPDATE_QUERIES,
-        payload: newVisualization,
-    })
-}
+
 
 export const updateQuerie = newQ => dispatch => {
     dispatch({
