@@ -1,6 +1,6 @@
 import TYPE_ACTIONS from './types'
 
-//#region last versions
+//#region Простые функции для изменения состояния redux store.
 
 export const updateDashboards = newDashboard => dispatch => {
     dispatch({

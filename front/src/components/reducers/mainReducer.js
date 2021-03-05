@@ -1,14 +1,12 @@
-import TYPE_ACTIONS from '../actions/types'
+//#region Импорт модулей
 import getChangedArray from '../layouts/common/getChangedArray.ts'
+import TYPE_ACTIONS from '../actions/types'
+//#endregion
 
 const initState = {
     path: window.location.pathname,
     filteredDashboardsArray: [],
     dashboardsArray: [],
-    unfilteredArray: [],
-    visualizations: [],
-    filteredArray: [],
-    visualArray: [],
     isLoading: false,
     username: "",
     queries: [],
@@ -16,6 +14,15 @@ const initState = {
 }
 
 export default function (state = initState, action) {
+    /**
+     * Функция принимает список дашбордов и тэг, фильтрует список и возвращает
+     * список отфильтрованных бордов.
+     * 
+     * @param {Array} dashboards Принимаемый список дашбордов,
+     * может отличаться от хранящегося в store.
+     * @param {String} tag Тэг, по которму идет фильтрация списка дашбордов.
+     * @returns {Array} filteredDashboards Возвращаемый отфильтрованный список дашбордов.
+     */
     const filterDashboards = (dashboards, tag = state.tag) => {
         const filteredDashboards = dashboards
             .filter(db => state.username == adminName || db.tags.indexOf(state.username) >= 0)
@@ -26,7 +33,9 @@ export default function (state = initState, action) {
         return filteredDashboards
     }
     switch (action.type) {
+        // Обновление состояния простых данных в store.
         case TYPE_ACTIONS.UPDATE_STATE:
+            // Если изменилось состояние тэга, то фильтруется список дашбордов.
             const filteredDashboardsArray = action.payload.tag || action.payload.username ?
                 filterDashboards(state.dashboardsArray, action.payload.tag) :
                 state.filteredDashboardsArray
@@ -36,6 +45,7 @@ export default function (state = initState, action) {
                 filteredDashboardsArray: filteredDashboardsArray,
             }
         case TYPE_ACTIONS.UPDATE_DASHBOARDS:
+            // Обновление состояния списка дашбордов или добавление новых дашбордов.
             const dashboards = getChangedArray(state.dashboardsArray, action.payload, false, true)
             return {
                 ...state,
@@ -44,6 +54,8 @@ export default function (state = initState, action) {
                 filteredDashboardsArray: filterDashboards(dashboards),
             }
         case TYPE_ACTIONS.UPDATE_QUERIES:
+            // Обновление, добавление новых querie запросов.
+            // Также обновление, добавление визуализаций.
             const newQueries = getChangedArray(state.queries, action.payload, false, true)
                 .map(q => {
                     return {

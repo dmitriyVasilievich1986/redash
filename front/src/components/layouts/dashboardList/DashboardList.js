@@ -1,3 +1,4 @@
+//#region Импорт модулей
 import React from 'react'
 
 import { updateDashboards, updateProperties } from '../../actions/mainActions'
@@ -5,6 +6,7 @@ import AddDashboard from './AddDashboard'
 import Loading from '../common/Loading'
 import { connect } from 'react-redux'
 import Dashboard from './Dashboard'
+//#endregion
 
 function DashboardList(props) {
     if (props.isLoading)
@@ -28,6 +30,7 @@ function DashboardList(props) {
     )
 }
 
+// Выгрузка состояний из redux store в параметры функции.
 const mapStateToProps = state => ({
     dashboards: state.main.filteredDashboardsArray,
     isLoading: state.main.isLoading,
