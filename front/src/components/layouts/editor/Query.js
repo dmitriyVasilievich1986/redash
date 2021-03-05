@@ -23,7 +23,7 @@ function Query(props) {
 
     const sendNewVisual = (newName, newLine) => {
         const context = {
-            method: 'set_new_visualization',
+            method: 'create_visualization',
             template: map ? 'map' : 'line',
             id: props.q.id,
             name: newName,
@@ -75,7 +75,7 @@ function Query(props) {
                         <Visualization key={v.id} v={v} visualizationUpdate={visualizationUpdateHandler} />
                     )}
                 </div>
-                {queryString ? <AddVisualization map={map} sendNewVisual={sendNewVisual} /> : ""}
+                {queryString ? <AddVisualization map={map} createVisualization={sendNewVisual} /> : ""}
                 <div style={{ marginBottom: "1rem" }} />
             </div>
         </div>

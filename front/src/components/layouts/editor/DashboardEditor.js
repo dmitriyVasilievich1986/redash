@@ -1,16 +1,15 @@
-import { setIsLoading, updateDashboards, updateVisualizations, updateVisualArray, updateQueries, updateQuerie } from '../../actions/mainActions'
+import { updateDashboards, updateQueries } from '../../actions/mainActions'
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { connect } from 'react-redux'
-import Query from './Query'
-import Loading from '../common/Loading'
-import getChangedArray from '../common/getChangedArray.ts'
-import moduleName from './CreateQuerrie'
-import NameInput from '../common/NameInput'
 
-import Tags from '../common/Tags'
 import sendPostData from '../common/sendPostData'
 import CreateQuerrie from './CreateQuerrie'
+import NameInput from '../common/NameInput'
+import Loading from '../common/Loading'
+import Tags from '../common/Tags'
+import Query from './Query'
+
 
 
 function getQueries(queries, dashboard) {
@@ -66,6 +65,8 @@ function DashboardEditor(props) {
     }
 
     const sendButtonHandler = () => {
+        sendUpdateVisualization()
+        sendSetVisualizations()
         sendUpdateDashboard()
         sendUpdateQuerie()
         discardUpdates()
@@ -80,6 +81,20 @@ function DashboardEditor(props) {
         sendPostData(context, props.updateDashboards, updated)
         setUpdated(false)
     }
+    const sendUpdateVisualization = () => {
+        props.queries
+            .map(q => q.visualizations.map(v => {
+                if (!v.updated)
+                    return
+                const context = {
+                    method: 'update_visualization',
+                    name: v.newName,
+                    querie_id: q.id,
+                    id: v.id,
+                }
+                sendPostData(context, props.updateQueries)
+            }))
+    }
     const sendUpdateQuerie = () => {
         props.queries
             .filter(q => q.updated)
@@ -93,76 +108,23 @@ function DashboardEditor(props) {
                 sendPostData(context, props.updateQueries)
             })
     }
-
-    // const updateVisualizationHandler = newVisualization => {
-    //     const visualizations = [...queries.map(q => {
-    //         const newVis = getChangedArray(q.visualizations, [newVisualization])
-    //         return {
-    //             ...q,
-    //             updated: false,
-    //             visualizations: newVis,
-    //         }
-    //     })]
-    //     updateQueries(visualizations)
-    // }
-    // const sendSetVisualizations = () => {
-    //     const vizualArray = []
-    //     queries.filter(q => q.visualizations).map(q => q.visualizations.map(v => { if (v.inDashboard) vizualArray.push(v.id) }))
-    //     const context = {
-    //         method: 'set_visualization_list',
-    //         slug: dashboard.slug,
-    //         visualization_list: vizualArray,
-    //     }
-    //     sendPostData(props.path, context, props.updateDashboards, props.setIsLoading)
-    // }
-    // const sendUpdateQueries = () => {
-    //     queries.filter(q => q.updated).map(q => { return { id: q.id, name: q.name, query: q.query } }).map(q => {
-    //         const context = {
-    //             method: 'update_query',
-    //             id: q.id,
-    //             name: q.name,
-    //             query: q.query,
-    //         }
-    //         sendPostData(props.path, context, props.updateQuerie, props.setIsLoading)
-    //     })
-    //     updateQueries(queries.map(q => { return { ...q, updated: false } }))
-    // }
-    // const sendUpdateVisualization = () => {
-    //     queries.map(q => q.visualizations.map(v => {
-    //         if (v.updated) {
-    //             const context = {
-    //                 method: 'update_visualization',
-    //                 name: v.name,
-    //                 id: v.id,
-    //             }
-    //             const updateV = data => { props.updateVisualizations([data]) }
-    //             sendPostData(props.path, context, updateV, props.setIsLoading)
-    //         }
-    //     }))
-    //     updateQueries(queries.map(q => { return { ...q, visualizations: q.visualizations.map(v => { return { ...v, updated: false } }) } }))
-    // }
-    // const updateDashboard = () => {
-    //     const context = {
-    //         method: 'update_dashboard',
-    //         id: dashboard.id,
-    //         name: name,
-    //         tags: tags,
-    //     }
-    //     sendPostData(props.path, context, props.updateDashboards, props.setIsLoading)
-    // }
-    // const sendDataToChange = () => {
-    //     sendSetVisualizations()
-    //     sendUpdateQueries()
-    //     updateDashboard()
-    //     sendUpdateVisualization()
-    // }
-    // const sendPublish = () => {
-    //     const context = {
-    //         method: "publish_dashboard",
-    //         id: dashboard.id,
-    //     }
-    //     sendPostData(props.path, context, data => { updateURL(data.public_url); props.setIsLoading(false) }, props.setIsLoading)
-    // }
+    const sendSetVisualizations = () => {
+        const visualizationsID = []
+        let updatedVisualizations = false
+        props.queries
+            .map(q => q.visualizations.map(v => {
+                if (v.updated)
+                    updatedVisualizations = true
+                if (v.inDashboard)
+                    visualizationsID.push(v.id)
+            }))
+        const context = {
+            visualization_list: visualizationsID,
+            method: 'set_visualization_list',
+            slug: dashboard.slug,
+        }
+        sendPostData(context, props.updateDashboards, updatedVisualizations)
+    }
     if (props.isLoading)
         return (<Loading />)
     return (
@@ -194,7 +156,7 @@ function DashboardEditor(props) {
             >
                 Сохранить изменения
                 </button>
-            {/* <CreateQuerrie /> */}
+            <CreateQuerrie />
         </div>
     )
 }
@@ -207,4 +169,4 @@ const mapStateToProps = state => ({
     path: state.main.path,
 })
 
-export default connect(mapStateToProps, { setIsLoading, updateDashboards, updateVisualizations, updateQuerie, updateVisualArray, updateQueries })(DashboardEditor)
+export default connect(mapStateToProps, { updateDashboards, updateQueries })(DashboardEditor)

@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import NameInput from '../common/NameInput'
 
 const LINE = [
     'Traffic', 'Gpps', 'sessions', 'devices', 'aps',
@@ -12,20 +13,12 @@ function AddVisualization(props) {
 
     return (
         <div style={{ marginTop: "1rem" }}>
-            <div style={{ display: "flex", alignItems: "center", marginTop: "1rem" }}>
-                <label>Название: </label>
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Название"
-                    value={name}
-                    onChange={e => updateName(e.target.value)} />
-            </div>
-            <div style={{ display: "flex", alignItems: "center", marginTop: "5px" }}>
-                <label>Шаблон: </label>
+            <NameInput name={[name, updateName]} />
+            <div className='row mt1'>
+                <label>Шаблон:</label>
                 <select
-                    style={{ width: "250px" }}
                     value={line}
+                    style={{ marginLeft: '5px', width: "250px" }}
                     onChange={e => { updateLine(e.target.value) }}>
                     {props.map === true ?
                         MAP_LINE.map(k => <option key={k} value={k}>{k}</option>) :
@@ -33,7 +26,7 @@ function AddVisualization(props) {
                     }
                 </select>
             </div>
-            <button onClick={() => props.sendNewVisual(name, line)} style={{ marginTop: "5px" }}>Создать</button>
+            <button onClick={() => props.createVisualization(name, line)}>Создать</button>
         </div>
     )
 }

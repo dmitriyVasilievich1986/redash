@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import { updateQueries } from '../../actions/mainActions'
 import sendPostData from '../common/sendPostData'
+import NameInput from '../common/NameInput'
+import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { setIsLoading, addNewQuerrie } from '../../actions/mainActions'
 
 const TEMPLATE = ['map', 'chart']
 const QUERY_LIST = {
@@ -17,22 +18,13 @@ function CreateQuerrie(props) {
             method: 'create_querrie',
             name: name,
         }
-        // sendPostData(props.path, context, data => { props.updateQuerie([...props.queries, data]) }, props.setIsLoading)
-        sendPostData(props.path, context, data => { props.addNewQuerrie(data); props.updateQuerie([...props.queries, data]); }, props.setIsLoading)
+        sendPostData(context, props.updateQueries)
     }
     return (
         <div style={{ marginTop: '2rem' }}>
             <label>Создать новый запрос:</label>
-            <div style={{ marginTop: "1rem" }}>
-                <label>Название:</label>
-                <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Название"
-                    value={name}
-                    onChange={e => updateName(e.target.value)} />
-            </div>
-            <div style={{ display: "flex", alignItems: "center", marginTop: "5px" }}>
+            <NameInput name={[name, updateName]} />
+            <div className='row mt1'>
                 <label>Шаблон: </label>
                 <select
                     style={{ width: "250px" }}
@@ -46,8 +38,4 @@ function CreateQuerrie(props) {
     )
 }
 
-const mapStateToProps = state => ({
-    path: state.main.path,
-})
-
-export default connect(mapStateToProps, { setIsLoading, addNewQuerrie })(CreateQuerrie)
+export default connect(null, { updateQueries })(CreateQuerrie)

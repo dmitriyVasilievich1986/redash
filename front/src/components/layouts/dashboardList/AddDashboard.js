@@ -1,4 +1,4 @@
-import { updateDashboards } from '../../actions/mainActions'
+import { updateDashboards, updateQueries } from '../../actions/mainActions'
 import sendPostData from '../common/sendPostData'
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
@@ -22,7 +22,14 @@ function AddDashboard(props) {
             name: name,
             map: map,
         }
-        sendPostData(context, props.updateDashboards)
+        sendPostData(
+            context,
+            p => {
+                props.updateQueries(p.chart)
+                props.updateQueries(p.map)
+                props.updateDashboards(p.dashboard)
+            }
+        )
     }
 
     return (
@@ -53,4 +60,4 @@ function AddDashboard(props) {
     )
 }
 
-export default connect(null, { updateDashboards })(AddDashboard)
+export default connect(null, { updateDashboards, updateQueries })(AddDashboard)

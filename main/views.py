@@ -29,16 +29,23 @@ def update_query(data):
     return {"payload": response.json()}
 
 
+# region dashboard
+
+# endregion
+
+
 def update_visualization(data):
     pk = data.get("id", None)
-    if pk is None:
+    querie_id = data.get("querie_id", None)
+    if pk is None or querie_id is None:
         return {"message": "Bad request"}
     context = {
         "name": data.get("name", ""),
     }
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    response = Redash.post(f"visualizations/{pk}", context)
-    return {"payload": response.json()}
+    Redash.post(f"visualizations/{pk}", context)
+    response = Redash.get(f"queries/{querie_id}").json()
+    return {"payload": response}
 
 
 def add_widget(vs_id):
@@ -218,7 +225,7 @@ def get_line_options(line, *args, **kwargs):
     return context
 
 
-def set_new_visualization(data, *args, **kwargs):
+def create_visualization(data, *args, **kwargs):
     pk = data.get("id", None)
     if pk is None:
         return {"message": "Bad request"}
@@ -258,6 +265,7 @@ def create_querrie(data, *args, **kwargs):
 
 def create_dashboard(data, *args, **kwargs):
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
+
     payload = dict()
     visualizations = list()
     for x, y in [("map", "Карта"), ("chart", "Графики")]:
@@ -284,15 +292,19 @@ def create_dashboard(data, *args, **kwargs):
         ("devices", "Устройства"),
         ("aps", "Aps"),
     ]:
-        visualizations.append(
-            set_new_visualization(
-                {
-                    "id": payload["chart"]["id"],
-                    "name": f"{name}_график",
-                    "line": key,
-                }  # 'name': 'График_' + visual_name,
-            )["payload"]["id"]
-        )
+        r_v = create_visualization(
+            {
+                "id": payload["chart"]["id"],
+                "name": f"{name}_график",
+                "line": key,
+            }  # 'name': 'График_' + visual_name,
+        )["payload"]["visualizations"]
+        for x in r_v:
+            visualizations = (
+                x["id"] not in visualizations
+                and visualizations + [x["id"]]
+                or visualizations
+            )
     set_visualization_list(
         {"slug": slug, "visualization_list": ",".join(str(x) for x in visualizations)}
     )
@@ -305,7 +317,7 @@ def create_dashboard(data, *args, **kwargs):
     }
     payload["dashboard"] = Redash.post(f"dashboards/{pk}", context).json()
     for x in ["map", "chart"]:
-        payload[x] = Redash.get(f'queries/{payload[x]["id"]}').json()
+        payload[x] = Redash.get(f"queries/{payload[x]['id']}").json()
     return {"payload": payload}
 
 
@@ -458,3 +470,16 @@ def some_test_view(request):
 # return JsonResponse(
 #     update_visualization(request.POST.get("id", 1), context)
 # )
+
+
+"""
+def post_refresh_querrie(data, *args, **kwargs):
+    pk = data.get("id", None)
+    if pk is None:
+        return {"message": "Bad request"}
+        context = {'message': 'empty'}
+        response, status = send_request_with_headers(POST_QUERIES + str(pk) + '/refresh', context=context)
+        if not status:
+            return {'message': 'Bad response'}
+            return {'payload': response}
+"""

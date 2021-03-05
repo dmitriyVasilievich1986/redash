@@ -1,12 +1,13 @@
-import React, { useEffect } from 'react'
-import ReactDOM from 'react-dom'
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import React, { useEffect } from 'react'
 import { Provider } from 'react-redux'
+import ReactDOM from 'react-dom'
 import store from './store'
-import TYPE_ACTIONS from './actions/types'
-import getContext from './layouts/common/getContext.ts'
 import axios from 'axios'
+
 import { DashboardList, DashboardEditor } from './layouts'
+import getContext from './layouts/common/getContext.ts'
+import TYPE_ACTIONS from './actions/types'
 
 
 const currentPath = window.location.pathname
@@ -51,15 +52,7 @@ function App() {
             queries => queries.results?.map(q => {
                 sendPostData(
                     { method: 'get_querie', id: q.id },
-                    sq => storeDispatch(
-                        TYPE_ACTIONS.UPDATE_QUERIES,
-                        sq,
-                        // {
-                        //     ...sq,
-                        //     newName: sq.name,
-                        //     visualizations: sq.visualizations.map(v => { return { ...v, newName: v.name, inDashboard: false } }),
-                        // }
-                    )
+                    sq => storeDispatch(TYPE_ACTIONS.UPDATE_QUERIES, sq)
                 )
             })
         )
