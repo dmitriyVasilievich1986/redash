@@ -83,6 +83,8 @@ def get_all_dashboards(*args, **kwargs):
 
 
 def update_dashboard(data):
+    print(data)
+    # return {"message": "Bad request"}
     pk = data.get("id", None)
     if pk is None:
         return {"message": "Bad request"}

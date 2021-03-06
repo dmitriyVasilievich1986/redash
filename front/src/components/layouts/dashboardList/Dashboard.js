@@ -67,19 +67,6 @@ function Dashboard(props) {
         e.preventDefault()
         // добавить, убрать визуализации для этого дашборда
         sendUpdateVisualisation()
-        // отправить данные для изменения дашборда. имя, тэги
-        sendUpdateDashboard()
-    }
-    // Создает запрос на обновление данных дашборда.
-    const sendUpdateDashboard = () => {
-        const context = {
-            method: 'update_dashboard',
-            name: props.d.name,
-            id: props.d.id,
-            tags: tags,
-        }
-        sendPostData(context, props.updateDashboards, updated)
-        setUpdated(false)
     }
     // Создает запрос на измнение списка отображаемых визуализаций для этого дашборда.
     const sendUpdateVisualisation = () => {
@@ -106,11 +93,7 @@ function Dashboard(props) {
                 </div>
                 : ''}
             {/* Тэги дашборда */}
-            <Tags
-                tags={[tags, updateTags]}
-                username={props.username}
-                updated={setUpdated}
-            />
+            <Tags tags={[tags, null]} />
             {/* Выводим список визуализаций, связанных с этим бордом. */}
             {visualizations.map(v =>
                 <Visualizations

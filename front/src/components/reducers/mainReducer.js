@@ -25,7 +25,7 @@ export default function (state = initState, action) {
      */
     const filterDashboards = (dashboards, tag = state.tag) => {
         const filteredDashboards = dashboards
-            .filter(db => state.username == adminName || db.tags.indexOf(state.username) >= 0)
+            .filter(db => state.username == ROLES.admin || db.tags.indexOf(state.username) >= 0)
             .filter(db => tag == '' ||
                 db.name.toLowerCase().indexOf(tag.toLowerCase()) >= 0 ||
                 db.tags.map(t => t.toLowerCase().indexOf(tag.toLowerCase()) >= 0).indexOf(true) >= 0
@@ -55,24 +55,7 @@ export default function (state = initState, action) {
             }
         case TYPE_ACTIONS.UPDATE_QUERIES:
             // Обновление, добавление новых querie запросов.
-            // Также обновление, добавление визуализаций.
             const newQueries = getChangedArray(state.queries, action.payload, false, true)
-                .map(q => {
-                    return {
-                        updated: false,
-                        newName: q.name,
-                        updatedQuery: null,
-                        ...q,
-                        visualizations: q.visualizations.map(v => {
-                            return {
-                                updated: false,
-                                newName: v.name,
-                                inDashboard: false,
-                                ...v,
-                            }
-                        })
-                    }
-                })
             return {
                 ...state,
                 isLoading: false,

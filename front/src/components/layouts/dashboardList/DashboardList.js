@@ -25,7 +25,7 @@ function DashboardList(props) {
             {props.dashboards.map(
                 d => <Dashboard key={d.id} d={d} />
             )}
-            {props.username == adminName ? <AddDashboard /> : ""}
+            {props.username == ROLES.admin ? <AddDashboard /> : ""}
         </div>
     )
 }

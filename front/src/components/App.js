@@ -21,17 +21,19 @@ const currentPath = window.location.pathname
  * @param {Array<any>} context Список параметров, отсылаемых на api.
  * @param {Function} payloadFunction Функция, выполняемая после успешного ответа сервера. 
  */
-function sendPostData(context, payloadFunction) {
+async function sendPostData(context, payloadFunction) {
     const [contextData, headers] = getContext(context)
 
-    axios.post(currentPath, contextData, headers)
+    await axios.post(currentPath, contextData, headers)
         .then(data => {
             if (data.data.message)
                 console.log(data.data.message)
             else if (data.data.payload)
                 payloadFunction(data.data.payload)
+            return data.data
         })
         .catch(err => console.log(err))
+    return 'not so'
 }
 
 /**
@@ -49,34 +51,62 @@ function storeDispatch(type, payload) {
 }
 //#endregion
 
+async function testFunction() {
+    await sendPostData(
+        { method: 'get_user' },
+        username => storeDispatch(TYPE_ACTIONS.UPDATE_STATE, { username: username })
+    )
+    // Получаем все querie запросы.
+    await sendPostData(
+        { method: 'get_all_queries' },
+        queries => queries.results?.map(q => {
+            sendPostData(
+                { method: 'get_querie', id: q.id },
+                sq => storeDispatch(TYPE_ACTIONS.UPDATE_QUERIES, sq)
+            )
+        })
+    )
+    // Получаем от сервера все дашборды.
+    await sendPostData(
+        { method: 'get_dashboards' },
+        dashboards => dashboards.results?.map(d => {
+            sendPostData(
+                { method: 'get_dashboard', id: d.slug },
+                db => storeDispatch(TYPE_ACTIONS.UPDATE_DASHBOARDS, db)
+            )
+        })
+    )
+}
+
 function App() {
     useEffect(() => {
+        testFunction()
         //#region Получаем все первичные данные от сервера. Обновляем состояние в redux store.
         // Получаем от сервера имя пользователя.
-        sendPostData(
-            { method: 'get_user' },
-            username => storeDispatch(TYPE_ACTIONS.UPDATE_STATE, { username: username })
-        )
-        // Получаем от сервера все дашборды.
-        sendPostData(
-            { method: 'get_dashboards' },
-            dashboards => dashboards.results?.map(d => {
-                sendPostData(
-                    { method: 'get_dashboard', id: d.slug },
-                    db => storeDispatch(TYPE_ACTIONS.UPDATE_DASHBOARDS, db)
-                )
-            })
-        )
-        //  Получаем все querie запросы.
-        sendPostData(
-            { method: 'get_all_queries' },
-            queries => queries.results?.map(q => {
-                sendPostData(
-                    { method: 'get_querie', id: q.id },
-                    sq => storeDispatch(TYPE_ACTIONS.UPDATE_QUERIES, sq)
-                )
-            })
-        )
+        // sendPostData(
+        //     { method: 'get_user' },
+        //     username => storeDispatch(TYPE_ACTIONS.UPDATE_STATE, { username: username })
+        // )
+        // // Получаем от сервера все дашборды.
+        // sendPostData(
+        //     { method: 'get_dashboards' },
+        //     dashboards => dashboards.results?.map(d => {
+        //         sendPostData(
+        //             { method: 'get_dashboard', id: d.slug },
+        //             db => storeDispatch(TYPE_ACTIONS.UPDATE_DASHBOARDS, db)
+        //         )
+        //     })
+        // )
+        // // Получаем все querie запросы.
+        // sendPostData(
+        //     { method: 'get_all_queries' },
+        //     queries => queries.results?.map(q => {
+        //         sendPostData(
+        //             { method: 'get_querie', id: q.id },
+        //             sq => storeDispatch(TYPE_ACTIONS.UPDATE_QUERIES, sq)
+        //         )
+        //     })
+        // )
         storeDispatch(TYPE_ACTIONS.UPDATE_STATE, { isLoading: false })
         //#endregion
     })

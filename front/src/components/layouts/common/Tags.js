@@ -1,11 +1,15 @@
+//#region Импорт модулей
 import React from 'react'
 
 import AddCircleOutlineIcon from '@material-ui/icons/AddCircleOutline';
 import HighlightOffIcon from '@material-ui/icons/HighlightOff';
+//#endregion
+
 
 function Tags(props) {
     const [tags, updateTags] = props.tags
-    if (!props.username || props.username != adminName) {
+
+    if (updateTags === null) {
         return (
             <div>
                 <p>Тэги:</p>
@@ -17,14 +21,15 @@ function Tags(props) {
         <div>
             <p>Тэги:</p>
             {tags.map(
-                (t, i) => <div style={{ display: "flex", alignItems: "center" }} key={i}><li>
+                (t, i) => <div className='row' key={i}><li>
                     <input
                         type="text"
                         placeholder="Тэг"
                         value={t}
                         onChange={e => {
-                            updateTags([...tags.map((x, y) => y == i ? e.target.value : x)])
-                            props.updated(true)
+                            if (t.match(/querie_/g) != null)
+                                return
+                            updateTags({ newTags: [...tags.map((x, y) => y == i ? e.target.value : x)] })
                         }}
                     /></li>
                     <HighlightOffIcon
@@ -32,17 +37,13 @@ function Tags(props) {
                         onClick={() => {
                             if (t.match(/querie_/g) != null)
                                 return
-                            props.updated(true)
-                            updateTags([...tags.filter((_, y) => y != i)])
+                            updateTags({ newTags: [...tags.filter((_, y) => y != i)] })
                         }}
                     /></div>
             )}
             <AddCircleOutlineIcon
                 style={{ cursor: "pointer" }}
-                onClick={() => {
-                    props.updated(true)
-                    updateTags([...tags, 'новый тэг'])
-                }}
+                onClick={() => updateTags({ newTags: [...tags, 'новый тэг'] })}
             />
         </div>
     )

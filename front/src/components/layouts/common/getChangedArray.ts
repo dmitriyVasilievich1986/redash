@@ -25,8 +25,27 @@ export default function (
             }
             return a
         })
-        if (!update && canAppend)
-            updatedArrayObject.map((o: IarrayObjects) => { updatedArray.push(o) })
+        if (!update && canAppend) {
+            updatedArrayObject.map((o: IarrayObjects) => {
+                updatedArray.push({
+                    ...o,
+                    updated: false,
+                    newName: o.name,
+                    updatedQuery: null,
+                    newTags: o.tags ? o.tags : null,
+                    visualizations: o.visualizations ?
+                        o.visualizations.map((v: IarrayObjects) => {
+                            return {
+                                ...v,
+                                updated: false,
+                                newName: v.name,
+                                inDashboard: false,
+                            }
+                        }) :
+                        null
+                })
+            })
+        }
     }
     return updatedArray
 }

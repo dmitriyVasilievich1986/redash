@@ -1,13 +1,10 @@
+import { updateVisualizations } from '../../actions/mainActions'
 import React from 'react'
 
 function Visualization(props) {
     const visualizationUpdateHandler = newVisualization => {
-        const v = {
-            ...props.v,
-            ...newVisualization,
-            updated: true
-        }
-        props.visualizationUpdate(v)
+        const v = { ...props.v, ...newVisualization, updated: true }
+        updateVisualizations(props.q, v)
     }
     return (
         <div style={{ marginTop: "5px" }}>

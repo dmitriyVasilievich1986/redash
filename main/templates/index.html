@@ -9,13 +9,11 @@
 </head>
 
 <body>
-    <!-- <script>
-        const dashboard = JSON.parse('{{ dashboard | safe }}')
-        // const queries = JSON.parse('{{ queries | safe }}')
-    </script> -->
     <div id='app' />
     <script>
-        const adminName = 'admin'
+        const ROLES = {
+            'admin': 'admin',
+        }
         const CONTRACTS_ID = {
             "SF139": 'ООО "Ингка Сентерс Рус Оперэйшн"',
             "KI036": 'ООО "Леруа Мерлен Восток"',

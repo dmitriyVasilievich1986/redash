@@ -10,14 +10,14 @@ function setIsLoading(isLoading) {
     })
 }
 
-export default function (arrayObject, functionUpdate, isUpdated = true) {
+export default async function (arrayObject, functionUpdate, isUpdated = true) {
     const needToUpdate = Array.isArray(isUpdated) ? isUpdated.map(u => u.updated).indexOf(true) >= 0 : isUpdated
     if (!needToUpdate)
         return
     const path = store.getState().main.path
     setIsLoading(true)
     const [contextData, headers] = getContext(arrayObject)
-    axios.post(path, contextData, headers)
+    await axios.post(path, contextData, headers)
         .then(data => {
             if (data.data.message) {
                 console.log(data.data.message)
