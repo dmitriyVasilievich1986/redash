@@ -1,5 +1,6 @@
 //#region Импорт модулей
-import { updateProperties, updateQueries, updateVisualizations, sendRefreshQuerrie } from '../../actions/mainActions'
+import { updateQueries } from '../../actions/mainActions'
+import { sendRefreshQuerrie } from '../../actions/sendPostActions'
 import React, { useState } from 'react'
 
 import AddVisualization from './AddVisualization'
