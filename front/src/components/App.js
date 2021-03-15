@@ -1,121 +1,59 @@
 //#region Импорт модулей
 import { BrowserRouter, Switch, Route } from 'react-router-dom'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Provider } from 'react-redux'
 import ReactDOM from 'react-dom'
 import store from './store'
-import axios from 'axios'
 
-import { DashboardList, DashboardEditor } from './layouts'
-import getContext from './layouts/common/getContext.ts'
-import TYPE_ACTIONS from './actions/types'
+import { updateQueriesResponse, updateDashboardsResponse, updateProperties } from './actions/postActions'
+import { DashboardList, DashboardEditor, Manager } from './layouts'
+import sendPostData from './layouts/common/sendPostData'
 //#endregion
 
 const currentPath = window.location.pathname
 
-//#region Отправление запроса на сервер. Получение и хранение ответа в redux store
-/**
- * Функция принимает список параметров, шлет запрос на сервер,
- * после успешного ответа выполняет функцию, принимаемую в параметрах.
- * 
- * @param {Array<any>} context Список параметров, отсылаемых на api.
- * @param {Function} payloadFunction Функция, выполняемая после успешного ответа сервера. 
- */
-async function sendPostData(context, payloadFunction) {
-    const [contextData, headers] = getContext(context)
-
-    await axios.post(currentPath, contextData, headers)
-        .then(data => {
-            if (data.data.message)
-                console.log(data.data.message)
-            else if (data.data.payload)
-                payloadFunction(data.data.payload)
-            return data.data
+function loadDataFromServer(updateUsername) {
+    updateProperties({ isLoading: true })
+    sendPostData({ method: 'get_user' })
+        .then(username => {
+            updateUsername(username)
+            updateProperties({ username: username })
         })
         .catch(err => console.log(err))
-    return 'not so'
+    sendPostData({ method: 'get_all_queries' })
+        .then(queries => Promise.all(queries.results?.map(q => sendPostData({ method: 'get_querie', id: q.id }))))
+        .then(allQueries => {
+            allQueries?.map(q => updateQueriesResponse(q, true))
+            return sendPostData({ method: 'get_dashboards' })
+        })
+        .then(dashboards => Promise.all(dashboards.results?.map(d => sendPostData({ method: 'get_dashboard', id: d.slug }))))
+        .then(allDashboards => {
+            allDashboards?.map(nd => updateDashboardsResponse(nd))
+            updateProperties({ isLoading: false })
+        })
 }
 
-/**
- * Простая функция, принимает тип и значение, для измнения состояния
- * данных в redux store.
- * 
- * @param {String} type Строковое представление типа запроса.
- * @param {Any} payload Объект, для синхронизации данных в redux store.
- */
-function storeDispatch(type, payload) {
-    store.dispatch({
-        type: type,
-        payload: payload,
-    })
-}
-//#endregion
-
-async function testFunction() {
-    await sendPostData(
-        { method: 'get_user' },
-        username => storeDispatch(TYPE_ACTIONS.UPDATE_STATE, { username: username })
-    )
-    // Получаем все querie запросы.
-    await sendPostData(
-        { method: 'get_all_queries' },
-        queries => queries.results?.map(q => {
-            sendPostData(
-                { method: 'get_querie', id: q.id },
-                sq => storeDispatch(TYPE_ACTIONS.UPDATE_QUERIES, sq)
-            )
-        })
-    )
-    // Получаем от сервера все дашборды.
-    await sendPostData(
-        { method: 'get_dashboards' },
-        dashboards => dashboards.results?.map(d => {
-            sendPostData(
-                { method: 'get_dashboard', id: d.slug },
-                db => storeDispatch(TYPE_ACTIONS.UPDATE_DASHBOARDS, db)
-            )
-        })
-    )
-}
 
 function App() {
+    const [username, updateUsername] = useState('')
+    const [firstLoad, updateLoad] = useState(true)
     useEffect(() => {
-        testFunction()
-        //#region Получаем все первичные данные от сервера. Обновляем состояние в redux store.
-        // Получаем от сервера имя пользователя.
-        // sendPostData(
-        //     { method: 'get_user' },
-        //     username => storeDispatch(TYPE_ACTIONS.UPDATE_STATE, { username: username })
-        // )
-        // // Получаем от сервера все дашборды.
-        // sendPostData(
-        //     { method: 'get_dashboards' },
-        //     dashboards => dashboards.results?.map(d => {
-        //         sendPostData(
-        //             { method: 'get_dashboard', id: d.slug },
-        //             db => storeDispatch(TYPE_ACTIONS.UPDATE_DASHBOARDS, db)
-        //         )
-        //     })
-        // )
-        // // Получаем все querie запросы.
-        // sendPostData(
-        //     { method: 'get_all_queries' },
-        //     queries => queries.results?.map(q => {
-        //         sendPostData(
-        //             { method: 'get_querie', id: q.id },
-        //             sq => storeDispatch(TYPE_ACTIONS.UPDATE_QUERIES, sq)
-        //         )
-        //     })
-        // )
-        storeDispatch(TYPE_ACTIONS.UPDATE_STATE, { isLoading: false })
-        //#endregion
+        if (firstLoad) {
+            loadDataFromServer(updateUsername)
+            updateLoad(false)
+        }
     })
     return (
         <Provider store={store}>
             <div className='container'>
                 <BrowserRouter>
                     <Switch>
-                        <Route exact path={currentPath} component={DashboardList} />
+                        {username == ROLES.admin || username == ROLES.manager ?
+                            <Route
+                                exact path={currentPath}
+                                component={username == ROLES.admin ? DashboardList : Manager}
+                            /> :
+                            ""}
                         <Route
                             exact path={`${currentPath}edit/:dashboardSlug`}
                             render={props => <DashboardEditor {...props} currentPath={currentPath} />}

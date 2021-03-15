@@ -1,4 +1,4 @@
-import { updateDashboardsResponse, updateQueriesResponse } from './postActions'
+import { updateDashboardsResponse, updateQueriesResponse, updateProperties, updateVisualizationsResponse } from './postActions'
 import sendPostData from '../layouts/common/sendPostData'
 import store from '../store'
 import TYPE_ACTIONS from './types'
@@ -7,20 +7,34 @@ import TYPE_ACTIONS from './types'
 //#region Функции для отправления запроса на сервер.
 // Функции отправлюят и обновляют данные о 
 // дашбордах, querie запросах, визулизациях
-export const sendUpdateDashboard = async () => {
-    const dashboards = store.getState().main.dashboardsArray
-    await dashboards
-        .filter(d => d.updated === true)
-        .map(d => {
-            const context = {
-                method: 'update_dashboard',
-                name: d.newName,
-                tags: d.newTags,
-                id: d.id,
-            }
-            sendPostData(context, updateDashboardsResponse)
+export const sendUpdateDashboard = dashboard => {
+    updateProperties({ isLoading: true })
+    const visualizations = dashboard.newVisualizations
+    const needToUpdateVisualizations = dashboard.needUpdateVisualizations()
+    let context = {
+        method: "update_dashboard",
+        name: dashboard.newName,
+        tags: dashboard.newTags,
+        id: dashboard.id,
+    }
+    sendPostData(context, dashboard.updated)
+        .then(db => {
+            updateDashboardsResponse(db)
+            updateProperties({ isLoading: false })
+        })
+    updateProperties({ isLoading: true })
+    context = {
+        visualization_list: visualizations,
+        method: "set_visualization_list",
+        slug: dashboard.slug,
+    }
+    sendPostData(context, needToUpdateVisualizations)
+        .then(db => {
+            updateDashboardsResponse(db)
+            updateProperties({ isLoading: false })
         })
 }
+
 
 export const sendUpdateQueries = async () => {
     const queries = store.getState().main.queries

@@ -267,7 +267,11 @@ def create_querrie(data, *args, **kwargs):
 
 def create_dashboard(data, *args, **kwargs):
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-
+    context = {"method": "can_create"}
+    response = requests.post("http://localhost", data=context).json()
+    print(response)
+    if not response.get("payload", None) or response["payload"] != True:
+        return {"message": "Bad resposne"}
     payload = dict()
     visualizations = list()
     for x, y in [("map", "Карта"), ("chart", "Графики")]:
@@ -287,6 +291,7 @@ def create_dashboard(data, *args, **kwargs):
     ).json()  # context = {'name': 'Таблица - ' + table_name}
     pk = response.get("id", None)
     slug = response.get("slug", "")
+    publish_dashboard({"id": pk})
     for key, name in [
         ("Traffic", "Трафик"),
         ("Gpps", "GPPS"),
@@ -318,6 +323,7 @@ def create_dashboard(data, *args, **kwargs):
         ],
     }
     payload["dashboard"] = Redash.post(f"dashboards/{pk}", context).json()
+    payload["dashboard"] = Redash.get(f"dashboards/{slug}").json()
     for x in ["map", "chart"]:
         payload[x] = Redash.get(f"queries/{payload[x]['id']}").json()
     return {"payload": payload}
@@ -329,19 +335,24 @@ def publish_dashboard(data, *args, **kwargs):
         return {"message": "Bad request"}
     context = {"is_draft": False}
     Redash = RedashAPIClient(API_KEY, REDASH_HOST)
-    Redash.post(f"dashboards/{pk}", context).json()
+    # Redash.post(f"dashboards/{pk}", context).json()
     response = Redash.post(f"dashboards/{pk}/share", context).json()
     return {"payload": response}
 
 
 def get_user(data, *args, **kwargs):
-    return {"payload": "admin"}
+    return {"payload": "manager"}
+
+
+def get_contract_id_query(data, *args, **kwargs):
+    return {"payload": {"can_create": False}}
 
 
 @csrf_exempt
 def index_view(request, *args, **kwargs):
     if request.method == "POST":
         method = request.POST.get("method", None)
+        print(f"Method: {method}")
         action = globals().get(method, None)
         if not action:
             return JsonResponse({"message": "Bad request"})
@@ -485,3 +496,7 @@ def post_refresh_querrie(data, *args, **kwargs):
             return {'message': 'Bad response'}
             return {'payload': response}
 """
+
+# 'name': 'Карта_' + contract_id,
+
+# 'select count(*) from default.wifi_sessions, default.wifi_ap_history where INT_IP=NASIPAddress and CONTRACT_ID="IL405" and (Time.now()-INTERVAL 7 day);'

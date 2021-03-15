@@ -7,45 +7,27 @@ export default function (
     unchangedArray: Array<IarrayObjects>,
     updatedArrayOrObject: Array<IarrayObjects> | IarrayObjects,
     toDelete: boolean = false,
-    canAppend: boolean = false,
 ): Array<IarrayObjects> {
 
+    // Приводим входной объект к массиву объектов
     const updatedArrayObject: Array<IarrayObjects> = Array.isArray(updatedArrayOrObject) ? updatedArrayOrObject : [updatedArrayOrObject]
-    let updatedArray: Array<IarrayObjects> = new Array<IarrayObjects>()
-    const IDArray: Array<number> = updatedArrayObject.map((o: IarrayObjects) => o.id)
-    if (toDelete)
-        updatedArray = unchangedArray.filter((a: IarrayObjects) => !(a.id in IDArray))
-    else {
-        let update: boolean = false
-        updatedArray = unchangedArray.map((a: IarrayObjects) => {
-            if (IDArray.indexOf(a.id) >= 0) {
-                update = true
-                const updatedObject: IarrayObjects = updatedArrayObject.filter((o: IarrayObjects) => o.id == a.id)[0]
-                return { ...a, ...updatedObject }
+    // Инициализируем возвращаемый массив
+    let payload: Array<IarrayObjects> = [...unchangedArray]
+    // Получаем список id для начального массива обектов, которые необходимо изменить.
+    // Для более удобного поиска и фильтрации.
+    const IDArray: Array<number> = payload.map((o: IarrayObjects) => o.id)
+    // Только если необходимо удалить объект из списка
+    if (toDelete) {
+        const arrayIDToDelete = updatedArrayObject.map((ua: IarrayObjects) => ua.id)
+        payload = unchangedArray.filter((a: IarrayObjects) => arrayIDToDelete.indexOf(a.id) < 0)
+    } else {
+        updatedArrayObject.map((uo: IarrayObjects) => {
+            if (IDArray.indexOf(uo.id) >= 0) {
+                payload = payload.map((ua: IarrayObjects) => ua.id == uo.id ? uo : ua)
+            } else {
+                payload = [...payload, uo]
             }
-            return a
         })
-        if (!update && canAppend) {
-            updatedArrayObject.map((o: IarrayObjects) => {
-                updatedArray.push({
-                    ...o,
-                    updated: false,
-                    newName: o.name,
-                    updatedQuery: null,
-                    newTags: o.tags ? o.tags : null,
-                    visualizations: o.visualizations ?
-                        o.visualizations.map((v: IarrayObjects) => {
-                            return {
-                                ...v,
-                                updated: false,
-                                newName: v.name,
-                                inDashboard: false,
-                            }
-                        }) :
-                        null
-                })
-            })
-        }
     }
-    return updatedArray
+    return payload
 }

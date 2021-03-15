@@ -7,6 +7,7 @@ const initState = {
     path: window.location.pathname,
     filteredDashboardsArray: [],
     dashboardsArray: [],
+    visualizations: [],
     isLoading: false,
     username: "",
     queries: [],
@@ -46,20 +47,26 @@ export default function (state = initState, action) {
             }
         case TYPE_ACTIONS.UPDATE_DASHBOARDS:
             // Обновление состояния списка дашбордов или добавление новых дашбордов.
-            const dashboards = getChangedArray(state.dashboardsArray, action.payload, false, true)
+            const dashboards = getChangedArray(state.dashboardsArray, action.payload, false)
             return {
                 ...state,
-                isLoading: false,
                 dashboardsArray: dashboards,
                 filteredDashboardsArray: filterDashboards(dashboards),
             }
         case TYPE_ACTIONS.UPDATE_QUERIES:
             // Обновление, добавление новых querie запросов.
-            const newQueries = getChangedArray(state.queries, action.payload, false, true)
+            const newQueries = getChangedArray(state.queries, action.payload, false)
             return {
                 ...state,
-                isLoading: false,
                 queries: newQueries,
+            }
+        case TYPE_ACTIONS.UPDATE_VISUALIZATIONS:
+            // Обновление, добавление новых querie запросов.
+            const newVisual = getChangedArray(state.visualizations, action.payload, false)
+            // console.log(newVisual)
+            return {
+                ...state,
+                visualizations: newVisual,
             }
         default:
             return state
